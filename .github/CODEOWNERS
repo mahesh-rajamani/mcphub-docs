@@ -1,0 +1,13 @@
+# Global owner for all files
+* @mahesh-rajamani
+
+# Critical configuration files require owner approval
+/.github/ @mahesh-rajamani
+/docusaurus.config.ts @mahesh-rajamani
+/package.json @mahesh-rajamani
+/package-lock.json @mahesh-rajamani
+
+# Documentation structure protection
+/docs/ @mahesh-rajamani
+/src/ @mahesh-rajamani
+/static/ @mahesh-rajamani
