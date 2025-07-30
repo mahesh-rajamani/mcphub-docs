@@ -1,0 +1,24 @@
+{
+  "id": "getting-started/first-mcp",
+  "title": "Your First MCP",
+  "description": "Create your first Model Context Protocol server using MCPHub. This guide imports the Swagger Petstore API to demonstrate the complete OpenAPI import workflow.",
+  "source": "@site/docs/getting-started/first-mcp.md",
+  "sourceDirName": "getting-started",
+  "slug": "/getting-started/first-mcp",
+  "permalink": "/mcphub-docs/docs/latest/getting-started/first-mcp",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/mahesh-rajamani/mcphub-docs/tree/main/docs/getting-started/first-mcp.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Quick Install",
+    "permalink": "/mcphub-docs/docs/latest/getting-started/quick-install"
+  },
+  "next": {
+    "title": "Import OpenAPI Spec",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/import/openapi"
+  }
+}

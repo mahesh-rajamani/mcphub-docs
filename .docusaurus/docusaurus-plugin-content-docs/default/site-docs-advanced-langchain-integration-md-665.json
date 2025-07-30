@@ -1,0 +1,24 @@
+{
+  "id": "advanced/langchain-integration",
+  "title": "Using MCPHub with LangChain",
+  "description": "Learn how to integrate your MCPHub-deployed MCP servers with LangChain for powerful AI applications using Python.",
+  "source": "@site/docs/advanced/langchain-integration.md",
+  "sourceDirName": "advanced",
+  "slug": "/advanced/langchain-integration",
+  "permalink": "/mcphub-docs/docs/latest/advanced/langchain-integration",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/mahesh-rajamani/mcphub-docs/tree/main/docs/advanced/langchain-integration.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Deployment Management",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/deployment-management"
+  },
+  "next": {
+    "title": "Storage & Encryption",
+    "permalink": "/mcphub-docs/docs/latest/advanced/storage-encryption"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "creating-mcps/settings-widget",
+  "title": "Settings Widget",
+  "description": "The MCPHub Settings Widget provides a streamlined interface for configuring backend connections, admin authentication, tenant settings, and AI model integration. This widget is accessible from the main navigation and allows you to manage the platform's core connectivity and authentication configuration.",
+  "source": "@site/docs/creating-mcps/settings-widget.md",
+  "sourceDirName": "creating-mcps",
+  "slug": "/creating-mcps/settings-widget",
+  "permalink": "/mcphub-docs/docs/latest/creating-mcps/settings-widget",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/mahesh-rajamani/mcphub-docs/tree/main/docs/creating-mcps/settings-widget.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Authentication",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/authentication"
+  },
+  "next": {
+    "title": "Export and Import Configuration",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/export-import-config"
+  }
+}

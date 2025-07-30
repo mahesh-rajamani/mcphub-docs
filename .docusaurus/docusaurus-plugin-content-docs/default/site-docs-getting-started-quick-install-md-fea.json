@@ -1,0 +1,24 @@
+{
+  "id": "getting-started/quick-install",
+  "title": "Quick Install",
+  "description": "Get MCPHub running in under 5 minutes with Docker or Kubernetes.",
+  "source": "@site/docs/getting-started/quick-install.md",
+  "sourceDirName": "getting-started",
+  "slug": "/getting-started/quick-install",
+  "permalink": "/mcphub-docs/docs/latest/getting-started/quick-install",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/mahesh-rajamani/mcphub-docs/tree/main/docs/getting-started/quick-install.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Overview",
+    "permalink": "/mcphub-docs/docs/latest/getting-started/overview"
+  },
+  "next": {
+    "title": "Your First MCP",
+    "permalink": "/mcphub-docs/docs/latest/getting-started/first-mcp"
+  }
+}

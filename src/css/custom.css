@@ -1,0 +1,218 @@
+/**
+ * MCPHub Custom Styles
+ */
+
+:root {
+  --ifm-color-primary: #1e40af;
+  --ifm-color-primary-dark: #1d4ed8;
+  --ifm-color-primary-darker: #1e3a8a;
+  --ifm-color-primary-darkest: #172554;
+  --ifm-color-primary-light: #3b82f6;
+  --ifm-color-primary-lighter: #60a5fa;
+  --ifm-color-primary-lightest: #93c5fd;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #60a5fa;
+  --ifm-color-primary-dark: #3b82f6;
+  --ifm-color-primary-darker: #2563eb;
+  --ifm-color-primary-darkest: #1d4ed8;
+  --ifm-color-primary-light: #93c5fd;
+  --ifm-color-primary-lighter: #bfdbfe;
+  --ifm-color-primary-lightest: #dbeafe;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Hero section styling */
+.hero--primary {
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+}
+
+.hero__title {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.hero__subtitle {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+/* Button styling */
+.button--outline {
+  border: 2px solid currentColor;
+}
+
+.button--outline:hover {
+  background-color: currentColor;
+  color: white;
+}
+
+/* Code blocks */
+.prism-code {
+  border-radius: 8px;
+}
+
+/* Copy button styling */
+.clean-btn {
+  border-radius: 4px;
+}
+
+/* Features section */
+.features {
+  display: flex;
+  align-items: center;
+  padding: 2rem 0;
+  width: 100%;
+}
+
+.featureSvg {
+  height: 200px;
+  width: 200px;
+}
+
+/* Enhanced cards */
+.card {
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Navigation improvements */
+.navbar {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Table of contents */
+.table-of-contents {
+  border-left: 2px solid var(--ifm-color-primary-lighter);
+  padding-left: 1rem;
+}
+
+.table-of-contents__link {
+  font-size: 0.875rem;
+}
+
+.table-of-contents__link--active {
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+}
+
+/* Admonitions */
+.admonition {
+  border-radius: 8px;
+  border-left: 4px solid;
+}
+
+.admonition-heading {
+  font-weight: 600;
+}
+
+/* Success message styling */
+.alert--success {
+  background-color: #f0fdf4;
+  border-color: #22c55e;
+  color: #166534;
+}
+
+[data-theme='dark'] .alert--success {
+  background-color: #14532d;
+  color: #bbf7d0;
+}
+
+/* Warning message styling */
+.alert--warning {
+  background-color: #fffbeb;
+  border-color: #f59e0b;
+  color: #92400e;
+}
+
+[data-theme='dark'] .alert--warning {
+  background-color: #451a03;
+  color: #fcd34d;
+}
+
+/* Info message styling */
+.alert--info {
+  background-color: #eff6ff;
+  border-color: #3b82f6;
+  color: #1e40af;
+}
+
+[data-theme='dark'] .alert--info {
+  background-color: #1e3a8a;
+  color: #bfdbfe;
+}
+
+/* Responsive improvements */
+@media screen and (max-width: 996px) {
+  .hero__title {
+    font-size: 2rem;
+  }
+  
+  .hero__subtitle {
+    font-size: 1rem;
+  }
+  
+  .featureSvg {
+    height: 150px;
+    width: 150px;
+  }
+}
+
+/* Custom utility classes */
+.margin-bottom--lg {
+  margin-bottom: 3rem;
+}
+
+.padding-vert--lg {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+/* Code snippet enhancements */
+.code-block-with-title {
+  margin-top: 0;
+}
+
+.code-block-title {
+  background: var(--ifm-color-emphasis-300);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+}
+
+/* Versioning dropdown */
+.navbar__item.dropdown .navbar__link:after {
+  border-color: currentColor transparent;
+}
+
+/* Footer improvements */
+.footer {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+.footer__title {
+  color: white;
+  font-weight: 600;
+}
+
+.footer__item {
+  transition: color 0.2s ease-in-out;
+}
+
+.footer__item:hover {
+  color: var(--ifm-color-primary-light);
+}

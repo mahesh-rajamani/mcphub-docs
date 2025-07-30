@@ -1,0 +1,117 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "path": "/mcphub-docs/docs",
+      "versions": [
+        {
+          "name": "current",
+          "label": "Latest",
+          "isLast": true,
+          "path": "/mcphub-docs/docs/latest",
+          "mainDocId": "getting-started/overview",
+          "docs": [
+            {
+              "id": "advanced/admin-api-direct",
+              "path": "/mcphub-docs/docs/latest/advanced/admin-api-direct",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "advanced/header-forwarding",
+              "path": "/mcphub-docs/docs/latest/advanced/header-forwarding"
+            },
+            {
+              "id": "advanced/langchain-integration",
+              "path": "/mcphub-docs/docs/latest/advanced/langchain-integration",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "advanced/storage-encryption",
+              "path": "/mcphub-docs/docs/latest/advanced/storage-encryption",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "creating-mcps/authentication",
+              "path": "/mcphub-docs/docs/latest/creating-mcps/authentication",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "creating-mcps/deployment-management",
+              "path": "/mcphub-docs/docs/latest/creating-mcps/deployment-management",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "creating-mcps/export-import-config",
+              "path": "/mcphub-docs/docs/latest/creating-mcps/export-import-config",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "creating-mcps/import/custom-code",
+              "path": "/mcphub-docs/docs/latest/creating-mcps/import/custom-code",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "creating-mcps/import/grpc",
+              "path": "/mcphub-docs/docs/latest/creating-mcps/import/grpc",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "creating-mcps/import/manual-rest",
+              "path": "/mcphub-docs/docs/latest/creating-mcps/import/manual-rest",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "creating-mcps/import/openapi",
+              "path": "/mcphub-docs/docs/latest/creating-mcps/import/openapi",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "creating-mcps/manual-configuration",
+              "path": "/mcphub-docs/docs/latest/creating-mcps/manual-configuration",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "creating-mcps/settings-widget",
+              "path": "/mcphub-docs/docs/latest/creating-mcps/settings-widget",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "creating-mcps/variables/overview",
+              "path": "/mcphub-docs/docs/latest/creating-mcps/variables/overview",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "creating-mcps/versioning-merge",
+              "path": "/mcphub-docs/docs/latest/creating-mcps/versioning-merge",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "getting-started/first-mcp",
+              "path": "/mcphub-docs/docs/latest/getting-started/first-mcp",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "getting-started/overview",
+              "path": "/mcphub-docs/docs/latest/getting-started/overview",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "getting-started/quick-install",
+              "path": "/mcphub-docs/docs/latest/getting-started/quick-install",
+              "sidebar": "tutorialSidebar"
+            }
+          ],
+          "draftIds": [],
+          "sidebars": {
+            "tutorialSidebar": {
+              "link": {
+                "path": "/mcphub-docs/docs/latest/getting-started/overview",
+                "label": "getting-started/overview"
+              }
+            }
+          }
+        }
+      ],
+      "breadcrumbs": true
+    }
+  }
+}

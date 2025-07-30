@@ -1,0 +1,24 @@
+{
+  "id": "creating-mcps/export-import-config",
+  "title": "Export and Import Configuration",
+  "description": "MCPHub provides Universal Schema configuration export and import capabilities that allow you to share MCP configurations, create backups, and move configurations between environments or MCPHub instances.",
+  "source": "@site/docs/creating-mcps/export-import-config.md",
+  "sourceDirName": "creating-mcps",
+  "slug": "/creating-mcps/export-import-config",
+  "permalink": "/mcphub-docs/docs/latest/creating-mcps/export-import-config",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/mahesh-rajamani/mcphub-docs/tree/main/docs/creating-mcps/export-import-config.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Settings Widget",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/settings-widget"
+  },
+  "next": {
+    "title": "Versioning and Configuration Merge",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/versioning-merge"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "advanced/header-forwarding",
+  "title": "Header Forwarding",
+  "description": "Header forwarding is a powerful feature in MCPHub that enables seamless authentication and API integration by capturing headers from MCP requests and forwarding them to backend APIs. This allows for transparent authentication passthrough and custom header management.",
+  "source": "@site/docs/advanced/header-forwarding.md",
+  "sourceDirName": "advanced",
+  "slug": "/advanced/header-forwarding",
+  "permalink": "/mcphub-docs/docs/latest/advanced/header-forwarding",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/mahesh-rajamani/mcphub-docs/tree/main/docs/advanced/header-forwarding.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {}
+}

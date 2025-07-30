@@ -1,0 +1,24 @@
+{
+  "id": "creating-mcps/variables/overview",
+  "title": "User Variables",
+  "description": "User Variables make your MCP configurations dynamic and reusable across different environments. Instead of hardcoding values like API keys or URLs, you can use variables that get filled in when testing or deploying your MCP.",
+  "source": "@site/docs/creating-mcps/variables/overview.md",
+  "sourceDirName": "creating-mcps/variables",
+  "slug": "/creating-mcps/variables/overview",
+  "permalink": "/mcphub-docs/docs/latest/creating-mcps/variables/overview",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/mahesh-rajamani/mcphub-docs/tree/main/docs/creating-mcps/variables/overview.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Custom Code as Tool",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/import/custom-code"
+  },
+  "next": {
+    "title": "Manual Configuration",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/manual-configuration"
+  }
+}

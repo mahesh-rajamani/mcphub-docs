@@ -1,0 +1,24 @@
+{
+  "id": "creating-mcps/deployment-management",
+  "title": "Deployment Management",
+  "description": "MCPHub provides comprehensive deployment management capabilities that allow you to deploy, undeploy, and manage MCP configurations across different environments.",
+  "source": "@site/docs/creating-mcps/deployment-management.md",
+  "sourceDirName": "creating-mcps",
+  "slug": "/creating-mcps/deployment-management",
+  "permalink": "/mcphub-docs/docs/latest/creating-mcps/deployment-management",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/mahesh-rajamani/mcphub-docs/tree/main/docs/creating-mcps/deployment-management.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Versioning and Configuration Merge",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/versioning-merge"
+  },
+  "next": {
+    "title": "Using MCPHub with LangChain",
+    "permalink": "/mcphub-docs/docs/latest/advanced/langchain-integration"
+  }
+}

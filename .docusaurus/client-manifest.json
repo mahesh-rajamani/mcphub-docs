@@ -1,0 +1,447 @@
+{
+  "entrypoints": [
+    "main"
+  ],
+  "origins": {
+    "158": [
+      158
+    ],
+    "237": [
+      237
+    ],
+    "416": [
+      869,
+      416
+    ],
+    "913": [
+      869,
+      913
+    ],
+    "17896441": [
+      869,
+      401
+    ],
+    "main": [
+      354,
+      869,
+      792
+    ],
+    "runtime~main": [
+      792,
+      869,
+      354
+    ],
+    "090d07ac": [
+      793
+    ],
+    "09f58341": [
+      351
+    ],
+    "0c17e1cc": [
+      984
+    ],
+    "1a4e3797": [
+      869,
+      138
+    ],
+    "1df93b7f": [
+      869,
+      583
+    ],
+    "210f220d": [
+      258
+    ],
+    "277c1bb9": [
+      850
+    ],
+    "2fe9f17c": [
+      248
+    ],
+    "3b10380b": [
+      652
+    ],
+    "3bb31028": [
+      836
+    ],
+    "5a0f347c": [
+      572
+    ],
+    "5e95c892": [
+      647
+    ],
+    "665a111d": [
+      344
+    ],
+    "690dccd4": [
+      774
+    ],
+    "7a96ca3d": [
+      271
+    ],
+    "a16fd111": [
+      834
+    ],
+    "a1f0561b": [
+      455
+    ],
+    "a7456010": [
+      235
+    ],
+    "a7bd4aaa": [
+      98
+    ],
+    "a94703ab": [
+      869,
+      48
+    ],
+    "aba21aa0": [
+      742
+    ],
+    "bf2d90e2": [
+      723
+    ],
+    "c141421f": [
+      957
+    ],
+    "d280cd20": [
+      442
+    ],
+    "d471e512": [
+      648
+    ],
+    "f10a52c6": [
+      919
+    ],
+    "feac6622": [
+      196
+    ],
+    "styles": [
+      48,
+      138,
+      354,
+      401,
+      416,
+      583,
+      792,
+      913,
+      869
+    ]
+  },
+  "assets": {
+    "48": {
+      "js": [
+        {
+          "file": "assets/js/a94703ab.c4b46d54.js",
+          "hash": "5fc9aa72c63006fb",
+          "publicPath": "/mcphub-docs/assets/js/a94703ab.c4b46d54.js"
+        }
+      ]
+    },
+    "98": {
+      "js": [
+        {
+          "file": "assets/js/a7bd4aaa.b71a503d.js",
+          "hash": "b9fe9d6c8b252895",
+          "publicPath": "/mcphub-docs/assets/js/a7bd4aaa.b71a503d.js"
+        }
+      ]
+    },
+    "138": {
+      "js": [
+        {
+          "file": "assets/js/1a4e3797.f48c1741.js",
+          "hash": "543d6fa497c0501c",
+          "publicPath": "/mcphub-docs/assets/js/1a4e3797.f48c1741.js"
+        }
+      ]
+    },
+    "158": {
+      "js": [
+        {
+          "file": "assets/js/158.c0cfe41b.js",
+          "hash": "5ddc988dcef773b3",
+          "publicPath": "/mcphub-docs/assets/js/158.c0cfe41b.js"
+        }
+      ]
+    },
+    "196": {
+      "js": [
+        {
+          "file": "assets/js/feac6622.9165b80a.js",
+          "hash": "44e8f8d4c2f66613",
+          "publicPath": "/mcphub-docs/assets/js/feac6622.9165b80a.js"
+        }
+      ]
+    },
+    "235": {
+      "js": [
+        {
+          "file": "assets/js/a7456010.8c1c2db8.js",
+          "hash": "05f5966621155b3c",
+          "publicPath": "/mcphub-docs/assets/js/a7456010.8c1c2db8.js"
+        }
+      ]
+    },
+    "237": {
+      "js": [
+        {
+          "file": "assets/js/237.4732933a.js",
+          "hash": "8d63559d868bfc6f",
+          "publicPath": "/mcphub-docs/assets/js/237.4732933a.js"
+        }
+      ]
+    },
+    "248": {
+      "js": [
+        {
+          "file": "assets/js/2fe9f17c.c21851f0.js",
+          "hash": "0933cfcddb9a661b",
+          "publicPath": "/mcphub-docs/assets/js/2fe9f17c.c21851f0.js"
+        }
+      ]
+    },
+    "258": {
+      "js": [
+        {
+          "file": "assets/js/210f220d.26cb876d.js",
+          "hash": "945e6b7989aaf612",
+          "publicPath": "/mcphub-docs/assets/js/210f220d.26cb876d.js"
+        }
+      ]
+    },
+    "271": {
+      "js": [
+        {
+          "file": "assets/js/7a96ca3d.1e1d9cef.js",
+          "hash": "01214b955baf81d6",
+          "publicPath": "/mcphub-docs/assets/js/7a96ca3d.1e1d9cef.js"
+        }
+      ]
+    },
+    "344": {
+      "js": [
+        {
+          "file": "assets/js/665a111d.3bacd049.js",
+          "hash": "1d0851503d357783",
+          "publicPath": "/mcphub-docs/assets/js/665a111d.3bacd049.js"
+        }
+      ]
+    },
+    "351": {
+      "js": [
+        {
+          "file": "assets/js/09f58341.1d3945ff.js",
+          "hash": "9689be1aff4bdb3c",
+          "publicPath": "/mcphub-docs/assets/js/09f58341.1d3945ff.js"
+        }
+      ]
+    },
+    "354": {
+      "js": [
+        {
+          "file": "assets/js/runtime~main.82dce786.js",
+          "hash": "01d965b1b35f30ff",
+          "publicPath": "/mcphub-docs/assets/js/runtime~main.82dce786.js"
+        }
+      ]
+    },
+    "401": {
+      "js": [
+        {
+          "file": "assets/js/17896441.b334e6d7.js",
+          "hash": "111bf21ee9664f90",
+          "publicPath": "/mcphub-docs/assets/js/17896441.b334e6d7.js"
+        }
+      ]
+    },
+    "416": {
+      "js": [
+        {
+          "file": "assets/js/416.0e668779.js",
+          "hash": "e770a34ac678c001",
+          "publicPath": "/mcphub-docs/assets/js/416.0e668779.js"
+        }
+      ]
+    },
+    "442": {
+      "js": [
+        {
+          "file": "assets/js/d280cd20.6b1e3e05.js",
+          "hash": "3e01fa5fbd24aa0c",
+          "publicPath": "/mcphub-docs/assets/js/d280cd20.6b1e3e05.js"
+        }
+      ]
+    },
+    "455": {
+      "js": [
+        {
+          "file": "assets/js/a1f0561b.29f837da.js",
+          "hash": "c7877d09d05376e3",
+          "publicPath": "/mcphub-docs/assets/js/a1f0561b.29f837da.js"
+        }
+      ]
+    },
+    "572": {
+      "js": [
+        {
+          "file": "assets/js/5a0f347c.84c95a0e.js",
+          "hash": "e9835acdb6c46d0b",
+          "publicPath": "/mcphub-docs/assets/js/5a0f347c.84c95a0e.js"
+        }
+      ]
+    },
+    "583": {
+      "js": [
+        {
+          "file": "assets/js/1df93b7f.fb98918a.js",
+          "hash": "fb3bf7114f29de12",
+          "publicPath": "/mcphub-docs/assets/js/1df93b7f.fb98918a.js"
+        }
+      ]
+    },
+    "647": {
+      "js": [
+        {
+          "file": "assets/js/5e95c892.08ada470.js",
+          "hash": "ac2bbdc8a7be5f93",
+          "publicPath": "/mcphub-docs/assets/js/5e95c892.08ada470.js"
+        }
+      ]
+    },
+    "648": {
+      "js": [
+        {
+          "file": "assets/js/d471e512.5c8a16b1.js",
+          "hash": "dd3275061b2a9a54",
+          "publicPath": "/mcphub-docs/assets/js/d471e512.5c8a16b1.js"
+        }
+      ]
+    },
+    "652": {
+      "js": [
+        {
+          "file": "assets/js/3b10380b.6c5b8ac6.js",
+          "hash": "bf345b830b80e34b",
+          "publicPath": "/mcphub-docs/assets/js/3b10380b.6c5b8ac6.js"
+        }
+      ]
+    },
+    "723": {
+      "js": [
+        {
+          "file": "assets/js/bf2d90e2.17818533.js",
+          "hash": "5b8ec395f4eba8af",
+          "publicPath": "/mcphub-docs/assets/js/bf2d90e2.17818533.js"
+        }
+      ]
+    },
+    "742": {
+      "js": [
+        {
+          "file": "assets/js/aba21aa0.4b557e75.js",
+          "hash": "616feba0fb6e44ed",
+          "publicPath": "/mcphub-docs/assets/js/aba21aa0.4b557e75.js"
+        }
+      ]
+    },
+    "774": {
+      "js": [
+        {
+          "file": "assets/js/690dccd4.83b1d66a.js",
+          "hash": "ebfecf7f6db142d3",
+          "publicPath": "/mcphub-docs/assets/js/690dccd4.83b1d66a.js"
+        }
+      ]
+    },
+    "792": {
+      "js": [
+        {
+          "file": "assets/js/main.402b7fc0.js",
+          "hash": "7581b64464566ae6",
+          "publicPath": "/mcphub-docs/assets/js/main.402b7fc0.js"
+        }
+      ]
+    },
+    "793": {
+      "js": [
+        {
+          "file": "assets/js/090d07ac.01d5fb05.js",
+          "hash": "8014542b1f9130a1",
+          "publicPath": "/mcphub-docs/assets/js/090d07ac.01d5fb05.js"
+        }
+      ]
+    },
+    "834": {
+      "js": [
+        {
+          "file": "assets/js/a16fd111.8baa204a.js",
+          "hash": "8295c6baab2dfc8a",
+          "publicPath": "/mcphub-docs/assets/js/a16fd111.8baa204a.js"
+        }
+      ]
+    },
+    "836": {
+      "js": [
+        {
+          "file": "assets/js/3bb31028.15a26314.js",
+          "hash": "e0dfb9c11c6791ad",
+          "publicPath": "/mcphub-docs/assets/js/3bb31028.15a26314.js"
+        }
+      ]
+    },
+    "850": {
+      "js": [
+        {
+          "file": "assets/js/277c1bb9.25e248fc.js",
+          "hash": "ce03996fd7685d95",
+          "publicPath": "/mcphub-docs/assets/js/277c1bb9.25e248fc.js"
+        }
+      ]
+    },
+    "869": {
+      "css": [
+        {
+          "file": "assets/css/styles.aff51464.css",
+          "hash": "990de4ebd95d5c33",
+          "publicPath": "/mcphub-docs/assets/css/styles.aff51464.css"
+        }
+      ]
+    },
+    "913": {
+      "js": [
+        {
+          "file": "assets/js/913.838a1099.js",
+          "hash": "1c7e81aa2ad67370",
+          "publicPath": "/mcphub-docs/assets/js/913.838a1099.js"
+        }
+      ]
+    },
+    "919": {
+      "js": [
+        {
+          "file": "assets/js/f10a52c6.5db002be.js",
+          "hash": "3e9f619c157846a2",
+          "publicPath": "/mcphub-docs/assets/js/f10a52c6.5db002be.js"
+        }
+      ]
+    },
+    "957": {
+      "js": [
+        {
+          "file": "assets/js/c141421f.e6f14525.js",
+          "hash": "cd1d5a90b5a3afb9",
+          "publicPath": "/mcphub-docs/assets/js/c141421f.e6f14525.js"
+        }
+      ]
+    },
+    "984": {
+      "js": [
+        {
+          "file": "assets/js/0c17e1cc.56e66213.js",
+          "hash": "6169396e7f88a0db",
+          "publicPath": "/mcphub-docs/assets/js/0c17e1cc.56e66213.js"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "getting-started/overview",
+  "title": "Overview",
+  "description": "MCPHub is a platform for designing, testing, deploying, and managing Model Context Protocol (MCP) servers. It transforms MCP server development from manual, fragmented processes to a unified, governed platform that dramatically reduces development time while improving quality and consistency.",
+  "source": "@site/docs/getting-started/overview.md",
+  "sourceDirName": "getting-started",
+  "slug": "/getting-started/overview",
+  "permalink": "/mcphub-docs/docs/latest/getting-started/overview",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/mahesh-rajamani/mcphub-docs/tree/main/docs/getting-started/overview.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "next": {
+    "title": "Quick Install",
+    "permalink": "/mcphub-docs/docs/latest/getting-started/quick-install"
+  }
+}

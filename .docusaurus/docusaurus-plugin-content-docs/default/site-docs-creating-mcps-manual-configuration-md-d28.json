@@ -1,0 +1,24 @@
+{
+  "id": "creating-mcps/manual-configuration",
+  "title": "Manual Configuration",
+  "description": "Create REST and gRPC endpoint configurations manually using MCPHub Studio's tabbed interface. This guide walks you through each tab in the exact order they appear in the application.",
+  "source": "@site/docs/creating-mcps/manual-configuration.md",
+  "sourceDirName": "creating-mcps",
+  "slug": "/creating-mcps/manual-configuration",
+  "permalink": "/mcphub-docs/docs/latest/creating-mcps/manual-configuration",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/mahesh-rajamani/mcphub-docs/tree/main/docs/creating-mcps/manual-configuration.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "User Variables",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/variables/overview"
+  },
+  "next": {
+    "title": "Authentication",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/authentication"
+  }
+}

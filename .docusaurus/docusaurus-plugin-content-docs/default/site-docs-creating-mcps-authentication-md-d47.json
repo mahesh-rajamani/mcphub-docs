@@ -1,0 +1,24 @@
+{
+  "id": "creating-mcps/authentication",
+  "title": "Authentication",
+  "description": "MCPHub supports multiple authentication methods for integrating with backend APIs. Configure authentication in the MCP Studio interface under the Protocol tab (Tab 2).",
+  "source": "@site/docs/creating-mcps/authentication.md",
+  "sourceDirName": "creating-mcps",
+  "slug": "/creating-mcps/authentication",
+  "permalink": "/mcphub-docs/docs/latest/creating-mcps/authentication",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/mahesh-rajamani/mcphub-docs/tree/main/docs/creating-mcps/authentication.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Manual Configuration",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/manual-configuration"
+  },
+  "next": {
+    "title": "Settings Widget",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/settings-widget"
+  }
+}

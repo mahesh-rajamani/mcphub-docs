@@ -1,0 +1,24 @@
+{
+  "id": "creating-mcps/import/custom-code",
+  "title": "Custom Code as Tool",
+  "description": "Create custom tools using Python code that execute within MCPHub's secure sandbox environment.",
+  "source": "@site/docs/creating-mcps/import/custom-code.md",
+  "sourceDirName": "creating-mcps/import",
+  "slug": "/creating-mcps/import/custom-code",
+  "permalink": "/mcphub-docs/docs/latest/creating-mcps/import/custom-code",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/mahesh-rajamani/mcphub-docs/tree/main/docs/creating-mcps/import/custom-code.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Import REST Endpoint using cURL",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/import/manual-rest"
+  },
+  "next": {
+    "title": "User Variables",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/variables/overview"
+  }
+}

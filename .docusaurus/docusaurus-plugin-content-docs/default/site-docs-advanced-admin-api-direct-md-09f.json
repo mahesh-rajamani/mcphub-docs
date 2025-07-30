@@ -1,0 +1,20 @@
+{
+  "id": "advanced/admin-api-direct",
+  "title": "Admin API Direct Access",
+  "description": "The MCPHub Admin API provides direct programmatic access to all configuration and management operations without using the MCP Studio frontend. This is ideal for automation, CI/CD pipelines, and headless deployments.",
+  "source": "@site/docs/advanced/admin-api-direct.md",
+  "sourceDirName": "advanced",
+  "slug": "/advanced/admin-api-direct",
+  "permalink": "/mcphub-docs/docs/latest/advanced/admin-api-direct",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/mahesh-rajamani/mcphub-docs/tree/main/docs/advanced/admin-api-direct.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Storage & Encryption",
+    "permalink": "/mcphub-docs/docs/latest/advanced/storage-encryption"
+  }
+}

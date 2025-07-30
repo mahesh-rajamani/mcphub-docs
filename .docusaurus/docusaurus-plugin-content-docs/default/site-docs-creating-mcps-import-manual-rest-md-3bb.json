@@ -1,0 +1,24 @@
+{
+  "id": "creating-mcps/import/manual-rest",
+  "title": "Import REST Endpoint using cURL",
+  "description": "Import REST endpoint configurations from existing cURL commands.",
+  "source": "@site/docs/creating-mcps/import/manual-rest.md",
+  "sourceDirName": "creating-mcps/import",
+  "slug": "/creating-mcps/import/manual-rest",
+  "permalink": "/mcphub-docs/docs/latest/creating-mcps/import/manual-rest",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/mahesh-rajamani/mcphub-docs/tree/main/docs/creating-mcps/import/manual-rest.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Import gRPC Proto",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/import/grpc"
+  },
+  "next": {
+    "title": "Custom Code as Tool",
+    "permalink": "/mcphub-docs/docs/latest/creating-mcps/import/custom-code"
+  }
+}
