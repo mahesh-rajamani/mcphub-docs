@@ -1,8 +1,160 @@
 # Storage & Encryption
 
-MCPHub provides enterprise-grade encryption for sensitive data with a simplified, secure key management system. This guide explains how your sensitive user variables and configuration data are protected.
+MCPHub provides flexible storage options and enterprise-grade encryption for sensitive data. This guide explains how to configure storage backends and how your sensitive data is protected.
 
-## Overview
+## Storage Configuration
+
+MCPHub supports multiple storage backends for MCP configurations and runtime data.
+
+### Storage Providers
+
+#### In-Memory Storage
+
+Lightweight storage for development and testing. Data is lost when the application restarts.
+
+**Configuration:**
+```bash
+export MCP_STORAGE_PROVIDER=memory
+```
+
+**Use Cases:**
+- Local development
+- Testing and demos
+- Temporary deployments
+
+**Limitations:**
+- No persistence across restarts
+- Single instance only (no clustering)
+- Limited by available RAM
+
+#### PostgreSQL Database Storage
+
+Production-ready storage with persistence and multi-instance support. Works with PostgreSQL and compatible databases (AWS RDS, Azure Database for PostgreSQL, Google Cloud SQL, etc.).
+
+**Environment Variables:**
+```bash
+export MCP_STORAGE_PROVIDER=database
+export DATABASE_URL=jdbc:postgresql://hostname:5432/database_name
+export DATABASE_USERNAME=username
+export DATABASE_PASSWORD=password
+```
+
+**Example Configurations:**
+
+**Local PostgreSQL:**
+```bash
+export MCP_STORAGE_PROVIDER=database
+export DATABASE_URL=jdbc:postgresql://localhost:5432/mcphub
+export DATABASE_USERNAME=mcphub_user
+export DATABASE_PASSWORD=your_secure_password
+```
+
+**AWS RDS PostgreSQL:**
+```bash
+export MCP_STORAGE_PROVIDER=database
+export DATABASE_URL=jdbc:postgresql://mydb.abc123.us-east-1.rds.amazonaws.com:5432/mcphub
+export DATABASE_USERNAME=admin
+export DATABASE_PASSWORD=your_secure_password
+```
+
+**Azure Database for PostgreSQL:**
+```bash
+export MCP_STORAGE_PROVIDER=database
+export DATABASE_URL=jdbc:postgresql://myserver.postgres.database.azure.com:5432/mcphub
+export DATABASE_USERNAME=adminuser@myserver
+export DATABASE_PASSWORD=your_secure_password
+```
+
+**Google Cloud SQL:**
+```bash
+export MCP_STORAGE_PROVIDER=database
+export DATABASE_URL=jdbc:postgresql://your-instance-ip:5432/mcphub
+export DATABASE_USERNAME=postgres
+export DATABASE_PASSWORD=your_secure_password
+```
+
+**Features:**
+- Automatic schema migrations via Flyway
+- Connection pooling (2-16 connections)
+- Health checks and monitoring
+- Multi-instance clustering support
+- Automatic deployment restoration on startup
+
+**Connection Pool Settings:**
+- Max connections: 16
+- Min connections: 2
+- Max lifetime: 30 minutes
+- Acquisition timeout: 10 seconds
+- Leak detection: 10 minutes
+
+### Database Schema
+
+Flyway automatically creates and manages the database schema when you use PostgreSQL storage. On first startup, it creates:
+
+**Tables:**
+
+1. **universal_schemas** - Stores complete MCP configurations as JSON
+   - Primary key: `id` (UUID)
+   - Unique constraint: `(mcp_name, version, tenant_id)`
+   - Stores: Configuration JSON, metadata, deployment status, version tracking
+
+2. **user_variables** - User-defined variables with encryption support
+   - Primary key: `id` (UUID)
+   - Foreign key: `mcp_configuration_id` references `universal_schemas(id)`
+   - Unique constraint: `(mcp_configuration_id, variable_name, tenant_id)`
+   - Stores: Variable values (encrypted if sensitive), salt, metadata
+
+3. **oauth2_tokens** - Encrypted OAuth 2.0 tokens
+   - Primary key: `id` (UUID)
+   - Unique constraint: `(tenant_id, mcp_name, client_id)`
+   - Stores: Encrypted access/refresh tokens, expiration times
+
+4. **configuration_groups** - Groups of MCP configurations for deployment
+   - Primary key: `id` (UUID)
+   - Unique constraint: `(group_name, tenant_id)`
+   - Stores: Group metadata, deployment order, configuration IDs
+
+5. **flyway_schema_history** - Tracks applied database migrations
+
+**Indexes:**
+
+Flyway creates comprehensive indexes for query performance:
+
+- **Tenant isolation**: `idx_mcp_name_tenant`, `idx_tenant_deployed`
+- **Version queries**: `idx_version_tenant`, `idx_name_version_tenant`
+- **Deployment status**: `idx_deployed`, `idx_universal_schemas_deployed_only`
+- **Performance**: `idx_universal_schemas_tenant_deployed_name`
+- **OAuth tokens**: `idx_oauth2_tenant_mcp_client`, `idx_oauth2_expires_at`
+- **GIN indexes** for JSON columns: `idx_universal_schemas_tags_gin`
+
+**Triggers:**
+
+Automatic timestamp management:
+- `update_updated_at_column()` - Updates `updated_at` on every row change
+- `update_configuration_version_on_save()` - Manages configuration and deployment IDs
+
+**Views:**
+
+- `oauth2_token_status` - Non-sensitive OAuth token monitoring
+- `configuration_versions` - Configuration version tracking
+
+**Migration Process:**
+
+1. **First startup**: Flyway runs `V1.0.0__Create_initial_schema.sql`
+2. **Subsequent startups**: Flyway checks for new migration files
+3. **Version tracking**: All migrations tracked in `flyway_schema_history`
+4. **Baseline**: Automatically creates baseline if database has existing tables
+
+### Switching Storage Providers
+
+When switching from in-memory to database storage:
+
+1. **Set environment variables** for database connection
+2. **Set storage provider**: `export MCP_STORAGE_PROVIDER=database`
+3. **Restart MCPHub** - Flyway will automatically create/update the schema
+4. **Existing configurations** from in-memory storage will be lost (export before switching)
+
+## Encryption Configuration
 
 MCPHub automatically encrypts sensitive information to keep your credentials and secrets secure using industry-standard AES-256-GCM encryption with tenant isolation.
 
@@ -49,13 +201,6 @@ MCPHub uses a three-level key hierarchy for maximum security:
 - **Derivation**: `PBKDF2(tenantKey, "variableName:randomSalt", 50000 iterations)`
 - **Usage**: This is the actual key used for AES-256-GCM encryption
 
-### Security Benefits
-
-- **Tenant Isolation**: Each tenant gets cryptographically unique keys
-- **Variable Isolation**: Each variable gets a unique key, even with the same name
-- **Salt Randomness**: Each encryption uses a fresh random salt
-- **Tamper Protection**: GCM provides authentication and integrity checking
-
 ## Configuration
 
 ### Setting Up Encryption
@@ -84,6 +229,7 @@ Key: SHA256(seed) → base64 encoded
 
 ### Example Configuration
 
+**Environment Variable (Default):**
 ```bash
 # Strong production key (recommended)
 export MCP_ENCRYPTION_KEY="abcd1234567890abcd1234567890abcd1234567890abcd1234567890abcd1234"
@@ -91,6 +237,57 @@ export MCP_ENCRYPTION_KEY="abcd1234567890abcd1234567890abcd1234567890abcd1234567
 # Alternative: Generate a random key
 export MCP_ENCRYPTION_KEY=$(openssl rand -base64 48)
 ```
+
+### HashiCorp Vault Integration
+
+MCPHub supports HashiCorp Vault for secure encryption key management as an alternative to environment variables.
+
+**Enable Vault:**
+```bash
+# Enable Vault integration
+export MCP_VAULT_ENABLED=true
+
+# Vault connection settings
+export MCP_VAULT_URL=https://vault.example.com:8200
+export MCP_VAULT_TOKEN=your-vault-token
+```
+
+**Vault Configuration:**
+- **KV Engine**: Version 2 (default)
+- **Mount Path**: `secret` (default)
+- **Key Paths**:
+  - Global key: `secret/global`
+  - Tenant-specific: `secret/tenants/{tenant}/shared`
+
+**Key Storage Hierarchy:**
+
+When Vault is enabled, MCPHub retrieves encryption keys from Vault using this hierarchy:
+
+1. **Tenant-specific key**: `secret/tenants/{tenant}/shared`
+2. **Global fallback**: `secret/global`
+3. **Environment variable**: `MCP_ENCRYPTION_KEY` (if Vault lookup fails)
+
+**Example Vault Setup:**
+
+```bash
+# Store global encryption key in Vault
+vault kv put secret/global encryption_key="your-global-key-here"
+
+# Store tenant-specific keys
+vault kv put secret/tenants/production/shared encryption_key="prod-tenant-key"
+vault kv put secret/tenants/staging/shared encryption_key="staging-tenant-key"
+```
+
+**When to Use Vault:**
+- Production deployments requiring centralized secret management
+- Multi-environment setups with different encryption keys
+- Compliance requirements for secret rotation and auditing
+- Integration with existing Vault infrastructure
+
+**When to Use Environment Variables:**
+- Development and testing environments
+- Simple deployments without Vault infrastructure
+- Container environments with built-in secret management (AWS Secrets Manager, Azure Key Vault via env injection)
 
 ## How Encryption Works
 
@@ -212,83 +409,7 @@ encryptionService.rotateKeysForTenant("shop_rite", oldKey, newKey);
 3. Re-encrypt all sensitive data
 4. Update database atomically
 
-### Monitoring
-
-Monitor these encryption metrics:
-- **Encryption Performance**: Latency for encrypt/decrypt operations
-- **Key Usage**: Access patterns and error rates
-- **Storage Growth**: Encrypted data volume
-- **Error Rates**: Failed decryption attempts
-
-## Best Practices
-
-### Security Recommendations
-
-1. **Strong Keys**: Use 64+ character keys for production
-2. **Key Storage**: Store keys in secure secret management systems
-3. **Environment Separation**: Use different keys per environment
-4. **Regular Rotation**: Plan for periodic key rotation
-5. **Monitoring**: Monitor encryption/decryption performance and errors
-
-### Compliance
-
-MCPHub encryption supports:
-- **GDPR**: Data encryption and tenant isolation
-- **HIPAA**: PHI encryption with access controls
-- **SOC 2**: Security controls and audit trails
-- **PCI DSS**: Cardholder data protection
-
-### Development vs Production
-
-**Development:**
-```bash
-# Optional - uses fallback key if not set
-export MCP_ENCRYPTION_KEY="dev-key-32-chars-minimum"
-```
-
-**Production:**
-```bash
-# Required - use strong key from secrets manager
-export MCP_ENCRYPTION_KEY="${SECRET_MANAGER_KEY}"
-```
-
-## Troubleshooting
-
-### Common Issues
-
-**Encryption Key Too Short:**
-```
-Error: Encryption key too short. Key must be at least 32 characters.
-```
-**Solution**: Use a longer key (64+ characters recommended)
-
-**Decryption Failures:**
-```
-Error: Failed to decrypt value for tenant default variable apiKey
-```
-**Solution**: Verify the same `MCP_ENCRYPTION_KEY` is used for encrypt/decrypt
-
-**Missing Environment Key:**
-```
-Warning: No encryption key found. Using fallback key generation for development.
-```
-**Solution**: Set `MCP_ENCRYPTION_KEY` environment variable
-
-### Verification
-
-Test encryption is working:
-```bash
-# Check if encryption service is active
-curl -X GET "http://localhost:8080/health" | grep encryption
-
-# Test variable encryption/decryption
-curl -X POST "http://localhost:8080/admin/default/test-mcp" \
-  -H "Content-Type: application/json" \
-  -d '{"userVariables": [{"name": "test", "value": "secret", "sensitive": true}]}'
-```
-
 ## Related Topics
 
 - [Authentication Configuration](../creating-mcps/authentication.md)
 - [User Variables Overview](../creating-mcps/variables/overview.md)
-- [Multi-Tenant Configuration](../configuration/multi-tenant.md)

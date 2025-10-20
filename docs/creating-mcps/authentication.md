@@ -4,15 +4,40 @@ MCPHub supports multiple authentication methods for integrating with backend API
 
 ## Authentication Types
 
-| Authentication Type | Description | Use Case |
-|-------------------|-------------|----------|
-| **None** | No authentication required | Public APIs or testing environments |
-| **Static Headers** | Fixed headers sent with every request | Fixed API keys or tokens that don't change |
-| **Header Forwarding** | Pass-through authentication headers from MCP clients | Authentication tokens generated outside MCPHub |
-| **JWT Authentication** | Acquire and manage JWT tokens automatically with refresh | Dynamic JWT tokens from token endpoints |
-| **OAuth 2.0** | OAuth 2.0 flows including client credentials and authorization code | Industry standard OAuth flows |
+| Authentication Type | Description | Use Case | Protocols |
+|-------------------|-------------|----------|-----------|
+| **None** | No authentication required | Public APIs or testing environments | All |
+| **Static Headers** | Fixed headers sent with every request | Fixed API keys or tokens that don't change | All |
+| **Header Forwarding** | Pass-through authentication headers from MCP clients | Authentication tokens generated outside MCPHub | All |
+| **JWT Authentication** | Acquire and manage JWT tokens automatically with refresh | Service-to-service API authentication | All |
+| **OAuth 2.0** | OAuth 2.0 client credentials flow with automatic token refresh | Industry standard OAuth flows for service-to-service auth | All |
+| **X.509 WS-Security** | Client certificate authentication in SOAP security headers | SOAP web services with certificate-based mutual auth | SOAP only |
 
-**Note**: Both Static Headers and Header Forwarding are available for all authentication types. Use them to configure additional headers like Content-Type, custom API headers, or pass-through headers from MCP clients regardless of your chosen authentication method.
+**Note**: Static Headers and Header Forwarding can be configured alongside other authentication methods to add custom headers or pass-through headers from MCP clients.
+
+---
+
+## Automatic User Variable Creation
+
+When you select JWT Authentication, OAuth 2.0, or X.509 WS-Security, MCPHub **automatically creates** the required user variables with standardized names. These variables are created in the User Variables tab and are ready to use.
+
+### JWT Authentication Variables (Auto-Created)
+- `jwtClientId` - JWT Client ID for service authentication
+- `jwtClientSecret` - JWT Client Secret (marked as sensitive)
+- `jwtScope` - JWT scope for API access permissions (optional)
+
+### OAuth 2.0 Variables (Auto-Created)
+- `oauthClientId` - OAuth 2.0 Client ID from authorization server
+- `oauthClientSecret` - OAuth 2.0 Client Secret (marked as sensitive)
+- `oauthScope` - OAuth 2.0 scope for API access permissions (optional)
+
+### X.509 WS-Security Variables (Auto-Created, SOAP only)
+- `clientCertificate` - Client X.509 certificate (Certificate type, auto-encrypted)
+- `clientPrivateKey` - Client private key (Certificate type, auto-encrypted)
+
+**Important**: Variable names are standardized and cannot be changed. This ensures consistency across configurations and simplifies deployment.
+
+---
 
 ## Static Headers Configuration
 
@@ -23,8 +48,9 @@ MCPHub supports multiple authentication methods for integrating with backend API
 
 ### Configuration Steps
 
-1. **Select Authentication Type**: Choose "Static Headers" from the authentication dropdown
-2. **Configure API Call Headers**: In the "API call headers" section, add your authentication headers
+1. **Go to Protocol tab** (Tab 2)
+2. **Select Authentication Type**: Choose "Static Headers" from the authentication dropdown
+3. **Configure API Call Headers**: Add your authentication headers below
 
 ### Configuration Examples
 
@@ -49,13 +75,18 @@ Result: `Authorization: Bearer your-static-token`
 
 Result: `X-Auth-Token: your-auth-token`
 
-### Required User Variables
+### Creating User Variables for Static Headers
 
-Create user variables for the authentication values:
+After configuring headers, create user variables for the values:
 
-- `apiKey`: API key value (mark as sensitive)
-- `apiToken`: Bearer token value (mark as sensitive)
-- `authToken`: Custom authentication token (mark as sensitive)
+1. **Go to User Variables tab** (Tab 3)
+2. **Click "Add Variable"**
+3. **Configure each variable**:
+   - `apiKey`: Type = Token, Sensitive = Yes
+   - `apiToken`: Type = Token, Sensitive = Yes
+   - `authToken`: Type = Token, Sensitive = Yes
+
+---
 
 ## Header Forwarding Configuration
 
@@ -67,8 +98,10 @@ Create user variables for the authentication values:
 
 ### Configuration Steps
 
-1. **Select Authentication Type**: Choose "Header Forwarding" from the authentication dropdown
-2. **Configure Header Forwarding Rules**: Set up which headers to forward from MCP clients to backend APIs
+1. **Go to Protocol tab** (Tab 2)
+2. **Scroll to Header Forwarding section** (available for all authentication types)
+3. **Click "Add Forwarding Rule"**
+4. **Configure rules**: Set up which headers to forward from MCP clients to backend APIs
 
 ### Configuration Examples
 
@@ -104,50 +137,61 @@ Forwards header only if present in client request.
 4. **Backend Request**: Forwards header to backend API
 5. **Response**: Returns backend response to client
 
-### Usage with MCP Clients
-
-When using header forwarding, MCP clients must include the authentication header:
-
-```typescript
-// Example MCP client request
-const response = await fetch('/mcp/endpoint', {
-  headers: {
-    'Authorization': 'Bearer your-external-token',
-    'Content-Type': 'application/json'
-  }
-});
-```
+---
 
 ## JWT Authentication Configuration
 
 ### When to Use
 - API provides JWT tokens via token endpoint
 - Need automatic token refresh
-- Service-to-service authentication
+- Service-to-service authentication (API to API communication)
+
+### Configuration Steps
+
+1. **Go to Protocol tab** (Tab 2)
+2. **Select Authentication Type**: Choose "JWT Authentication" from dropdown
+3. **Required user variables are automatically created**: `jwtClientId`, `jwtClientSecret`, `jwtScope`
+4. **Configure JWT settings** in the JWT Authentication Configuration card
 
 ### Configuration Fields
 
-**Token Endpoint**: URL where JWT tokens are obtained
+#### Token Endpoint URL (Required)
+URL where JWT tokens are obtained
+
 ```
 https://api.example.com/auth/token
 ```
 
-**Login Method**: 
-- `client_credentials` (currently supported)
-- `username_password` (currently supported)
+Example: `https://auth.example.com/token`
 
-**Client Credentials**:
-- **Client ID Variable**: `{{jwtClientId}}`
-- **Client Secret Variable**: `{{jwtClientSecret}}`
+#### Login Method
+**Client Credentials** (fixed) - For service-to-service API authentication
 
-**Username/Password**:
-- **Username Variable**: `{{jwtUsername}}`
-- **Password Variable**: `{{jwtPassword}}`
+The system uses the OAuth 2.0 client credentials flow to obtain JWT tokens.
 
-**Optional Configuration**:
-- **Scope Variable**: `{{jwtScope}}`
+#### Client Application Settings
 
-### Token Usage Configuration
+These variables are **automatically created** with standardized names:
+
+- **Client ID Variable**: `{{jwtClientId}}` (fixed, auto-created)
+- **Client Secret Variable**: `{{jwtClientSecret}}` (fixed, auto-created)
+- **Scope Variable**: `{{jwtScope}}` (fixed, auto-created, optional)
+
+**Additional optional variables:**
+- **Domain Variable**: Enter `{{jwtDomain}}` for enterprise domain authentication
+- **Audience Variable**: Enter `{{jwtAudience}}` for JWT audience claim
+
+#### Token Management
+
+**Token Storage**:
+- `encrypted_storage` - Production (recommended)
+- `memory` - Development only
+
+**Auto Refresh**: Enable automatic token renewal before expiration (enabled by default)
+
+**Refresh Threshold**: Minutes before expiry to refresh token (default: 5)
+
+#### Token Usage Configuration
 
 **Header Name**: HTTP header name for the token
 - Default: `Authorization`
@@ -158,52 +202,81 @@ https://api.example.com/auth/token
 - Token only: `{{token}}`
 - Custom: `Token {{token}}`, `API-Key {{token}}`
 
-### Token Storage Settings
+**Request Format**: Format for token request
+- `json` - JSON (application/json)
+- `form` - Form Data (application/x-www-form-urlencoded)
 
-**Token Storage**: 
-- `encrypted_storage` (production)
-- `memory` (development)
+### Setting Variable Values
 
-**Auto Refresh**: Enable automatic token renewal before expiration
+After configuration, go to **User Variables tab** (Tab 3) to set values:
 
-**Refresh Threshold**: Minutes before expiry to refresh token (default: 5)
+1. **Expand `jwtClientId`** variable card
+2. **Enter your JWT client ID** in the default value field
+3. **Expand `jwtClientSecret`** variable card
+4. **Enter your JWT client secret** in the default value field (will be masked)
+5. **Expand `jwtScope`** variable card (if needed)
+6. **Enter scope value** (optional, e.g., "api:read api:write")
+
+---
 
 ## OAuth 2.0 Configuration
 
 ### When to Use
-- Industry standard OAuth 2.0 flows
+- Industry standard OAuth 2.0 client credentials flow
 - Integration with enterprise identity providers
-- User authorization workflows
+- Service-to-service authentication
 
-### Flow Types
+### Configuration Steps
 
-#### Client Credentials Flow
-For service-to-service authentication.
+1. **Go to Protocol tab** (Tab 2)
+2. **Select Authentication Type**: Choose "OAuth 2.0" from dropdown
+3. **Required user variables are automatically created**: `oauthClientId`, `oauthClientSecret`, `oauthScope`
+4. **Configure OAuth 2.0 settings** in the OAuth 2.0 Authentication Configuration card
 
-**Configuration**:
-- **Flow Type**: `client_credentials`
-- **Token URL**: `https://oauth.example.com/token`
-- **Client ID Variable**: `{{oauthClientId}}`
-- **Client Secret Variable**: `{{oauthClientSecret}}`
-- **Scope Variable**: `{{oauthScope}}`
+### Quick Setup for Popular Providers
 
-#### Authorization Code Flow
-For user authorization workflows.
+Use the quick setup buttons to automatically configure URLs for popular providers:
 
-**Configuration**:
-- **Flow Type**: `authorization_code`
-- **Authorization URL**: `https://oauth.example.com/authorize`
-- **Token URL**: `https://oauth.example.com/token`
-- **Client ID Variable**: `{{oauthClientId}}`
-- **Client Secret Variable**: `{{oauthClientSecret}}`
-- **Redirect URI**: `http://localhost:8080/oauth2/{tenantId}/{mcpName}/auth`
-- **Scope Variable**: `{{oauthScope}}`
+- **Google OAuth** - Configures Google Cloud OAuth endpoints
+- **Microsoft Azure AD** - Configures Azure AD endpoints
+- **GitHub OAuth** - Configures GitHub OAuth endpoints
 
-**Redirect URI Configuration**:
-- Replace `{tenantId}` with your tenant ID (e.g., `default`)
-- Replace `{mcpName}` with your MCP name
-- Example: `http://localhost:8080/oauth2/default/payment-api/auth`
-- Production: `https://your-domain.com/oauth2/{tenantId}/{mcpName}/auth`
+Click a button to auto-populate Token URL, Authorization URL, and default scope.
+
+### OAuth 2.0 Flow Configuration
+
+#### Login Method
+**Client Credentials** (fixed) - For service-to-service API authentication (API to API communication)
+
+#### Token URL (Required)
+Endpoint for obtaining and refreshing access tokens
+
+```
+https://oauth.example.com/token
+```
+
+Examples:
+- Google: `https://oauth2.googleapis.com/token`
+- Microsoft: `https://login.microsoftonline.com/common/oauth2/v2.0/token`
+- GitHub: `https://github.com/login/oauth/access_token`
+
+#### Authorization URL (Optional)
+Endpoint for user authorization (informational)
+
+```
+https://oauth.example.com/authorize
+```
+
+### Client Application Settings
+
+These variables are **automatically created** with standardized names:
+
+- **Client ID Variable**: `{{oauthClientId}}` (fixed, auto-created)
+- **Client Secret Variable**: `{{oauthClientSecret}}` (fixed, auto-created)
+- **Scope Variable**: `{{oauthScope}}` (fixed, auto-created, optional)
+
+**Additional optional variables:**
+- **Audience Variable**: Enter `{{oauthAudience}}` for OAuth audience claim
 
 ### Token Usage Configuration
 
@@ -211,27 +284,81 @@ For user authorization workflows.
 
 **Header Format**: Token format in header (default: `Bearer {{token}}`)
 
-### Security Options
+### Custom OAuth Parameters
 
-**PKCE**: Enable Proof Key for Code Exchange for enhanced security
+Add provider-specific parameters for authorization and token requests:
 
-**State Parameter**: Enable state parameter for CSRF protection
+1. **Click "Add Parameter"**
+2. **Enter parameter name**: e.g., `prompt`, `access_type`, `resource`
+3. **Enter parameter value**: e.g., `consent`, `offline`, `https://api.example.com`
 
-## User Variables
+**Common examples:**
+- `prompt: consent` - Force consent screen
+- `access_type: offline` - Get refresh token
+- `resource: https://api.example.com` - Azure AD resource
 
-Authentication configurations use user variables for credentials:
+### Setting Variable Values
 
-### JWT Variables
-- `jwtClientId`: Client ID for JWT authentication
-- `jwtClientSecret`: Client secret (sensitive)
-- `jwtUsername`: Username for username/password flow
-- `jwtPassword`: Password for username/password flow (sensitive)
-- `jwtScope`: Authentication scope
+After configuration, go to **User Variables tab** (Tab 3) to set values:
 
-### OAuth 2.0 Variables
-- `oauthClientId`: OAuth client ID
-- `oauthClientSecret`: OAuth client secret (sensitive)
-- `oauthScope`: OAuth scope permissions
+1. **Expand `oauthClientId`** variable card
+2. **Enter your OAuth client ID**
+3. **Expand `oauthClientSecret`** variable card
+4. **Enter your OAuth client secret** (will be masked)
+5. **Expand `oauthScope`** variable card (if needed)
+6. **Enter scope value** (optional, e.g., "read write")
+
+### OAuth Provider Setup
+
+Create OAuth credentials at:
+- **Google Cloud Console**: https://console.cloud.google.com/
+- **Azure Portal**: https://portal.azure.com/ (App registrations)
+- **GitHub Developer Settings**: https://github.com/settings/developers (OAuth Apps)
+
+---
+
+## X.509 WS-Security Configuration (SOAP Only)
+
+### When to Use
+- SOAP web services requiring mutual authentication
+- Client certificate authentication in SOAP security headers
+- WS-Security standards compliance
+
+### Configuration Steps
+
+1. **Go to Protocol tab** (Tab 2) with SOAP selected
+2. **Select Authentication Type**: Choose "X.509 WS-Security" from dropdown
+3. **Required user variables are automatically created**: `clientCertificate`, `clientPrivateKey`
+4. **Certificate and Private Key variables are displayed** (read-only, auto-populated)
+
+### Configuration Fields
+
+**Certificate Variable**: `{{clientCertificate}}` (fixed, auto-created)
+- Variable containing the X.509 certificate in PEM format
+- Automatically encrypted when stored
+
+**Private Key Variable**: `{{clientPrivateKey}}` (fixed, auto-created)
+- Variable containing the private key in PEM format
+- Automatically encrypted when stored
+
+### Setting Certificate Values
+
+After configuration, go to **User Variables tab** (Tab 3) to set certificate values:
+
+1. **Expand `clientCertificate`** variable card
+2. **Paste PEM format certificate** or **upload certificate file**
+3. **Expand `clientPrivateKey`** variable card
+4. **Paste PEM format private key** or **upload key file**
+
+### X.509 WS-Security Features
+
+- Uses client certificates embedded in SOAP Security headers
+- Certificate and private key must be in PEM format
+- Provides mutual authentication between client and server
+- Supports both X.509 Binary Security Token and X.509 Certificate references
+- Certificate data is automatically encrypted regardless of sensitive setting
+
+---
 
 ## Token Header Examples
 
@@ -271,14 +398,17 @@ Result: `X-API-Token: eyJhbGciOiJIUzI1NiIs...`
 ```
 Result: `Authorization: Token eyJhbGciOiJIUzI1NiIs...`
 
+---
+
 ## Testing Authentication
 
 ### Using MCP Studio Test Interface
 
-1. Configure authentication in the MCP configuration
-2. Set user variable values (client ID, secret, etc.)
-3. Deploy the MCP configuration
-4. Use the test interface to verify authentication
+1. Configure authentication in the Protocol tab (Tab 2)
+2. Set user variable values in User Variables tab (Tab 3)
+3. **Save the MCP configuration**
+4. **Deploy the MCP** using the Deploy button
+5. Use the **Test MCP interface** to verify authentication
 
 ### Authentication Status
 
@@ -290,21 +420,28 @@ The test interface shows:
 ### Login Actions
 
 - **Login**: For JWT and OAuth client credentials flows
-- **Login with OAuth**: For OAuth authorization code flow
+- Tokens are automatically refreshed based on refresh threshold settings
+
+---
 
 ## How Authentication Works
 
-1. **Token Acquisition**: MCPHub obtains tokens from authentication providers
-2. **Token Storage**: Tokens stored securely with automatic refresh
-3. **Request Authentication**: Tokens added to API requests using configured header format
-4. **Token Refresh**: Automatic token renewal before expiration
-5. **Backend Processing**: Backend APIs validate tokens and process requests
+1. **Configuration**: Select authentication type in Protocol tab
+2. **Auto-Variable Creation**: Required user variables are automatically created with standardized names
+3. **Set Values**: Go to User Variables tab to enter credentials
+4. **Token Acquisition**: MCPHub obtains tokens from authentication providers using client credentials
+5. **Token Storage**: Tokens stored securely with automatic refresh
+6. **Request Authentication**: Tokens added to API requests using configured header format
+7. **Token Refresh**: Automatic token renewal before expiration
+8. **Backend Processing**: Backend APIs validate tokens and process requests
+
+---
 
 ## Production Deployment
 
 ### Environment Variables
 
-Set authentication credentials as environment variables:
+Set authentication credentials as environment variables matching the standardized variable names:
 
 ```bash
 # JWT Authentication
@@ -316,6 +453,14 @@ export jwtScope="api:read api:write"
 export oauthClientId="your-oauth-client-id"
 export oauthClientSecret="your-oauth-client-secret"
 export oauthScope="api:read api:write"
+
+# X.509 WS-Security (SOAP)
+export clientCertificate="-----BEGIN CERTIFICATE-----
+MIIDXTCCAkWgAwIBAgIJAKJ...
+-----END CERTIFICATE-----"
+export clientPrivateKey="-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0...
+-----END PRIVATE KEY-----"
 ```
 
 ### Security Requirements
@@ -323,5 +468,23 @@ export oauthScope="api:read api:write"
 - Use HTTPS for all authentication endpoints
 - Store credentials in secure environment variables
 - Enable encrypted token storage for production
-- Configure appropriate token refresh thresholds
+- Configure appropriate token refresh thresholds (default 5 minutes)
 - Use strong client secrets and rotate regularly
+- For X.509 certificates, protect private keys and rotate certificates before expiration
+
+---
+
+## Summary
+
+MCPHub authentication features:
+
+✅ **Auto-Variable Creation** - Authentication variables automatically created with standardized names
+✅ **Multi-Protocol Support** - JWT and OAuth 2.0 work across REST, gRPC, GraphQL, and SOAP
+✅ **Automatic Token Refresh** - Tokens renewed before expiration
+✅ **Encrypted Storage** - Secure token and credential storage
+✅ **Header Forwarding** - Pass-through authentication from MCP clients
+✅ **Static Headers** - Simple API key authentication
+✅ **Quick Setup** - Pre-configured templates for popular OAuth providers
+✅ **X.509 Support** - Certificate-based authentication for SOAP services
+
+All authentication configurations use the standardized user variable system for consistent, secure credential management.

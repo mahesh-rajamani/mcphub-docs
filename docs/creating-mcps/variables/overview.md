@@ -4,35 +4,40 @@ User Variables make your MCP configurations dynamic and reusable across differen
 
 ## Step 1: Create User Variables
 
-### Access the Variables Tab
+### Access the User Variables Tab
 1. **Open** your MCP configuration in MCP Studio
-2. **Click** the **"Variables"** tab in the main navigation
+2. **Click** the **"User Variables"** tab in the main navigation
 3. **You'll see** an empty variables list with an **"Add Variable"** button
 
 ### Add Your First Variable
-1. **Click** the **"Add Variable"** button
-2. **A new variable form appears** with several fields to fill out
+1. **Click** the **"Add Variable"** button in the top right
+2. **A new variable card appears** in the list
+3. **Click** the card to expand it and see all configuration fields
 
 ### Fill Out Variable Details
 
 #### Variable Name
 - **Type** a name using only letters, numbers, and underscores
-- **Good examples**: `apiKey`, `environment`, `maxResults`, `webhookUrl`
-- **Bad examples**: `api-key` (hyphens not allowed), `API Key` (spaces not allowed)
+- **Must start** with a letter or underscore (not a number)
+- **Good examples**: `apiKey`, `environment`, `maxResults`, `webhookUrl`, `_privateToken`
+- **Bad examples**: `api-key` (hyphens not allowed), `API Key` (spaces not allowed), `1stToken` (starts with number)
+- **Usage hint**: Variables are used as `{{variableName}}` in URLs, headers, and request bodies
 
 #### Description
 - **Write** a clear explanation of what this variable is for
 - **Be specific**: Instead of "API key", write "OpenAI API key for GPT-4 integration"
 - **Include instructions**: "Get your key from https://platform.openai.com/api-keys"
+- **Use AI assistance**: Click the sparkle icon (✨) to generate a description automatically
 
 #### Variable Type
 **Select** from the dropdown:
 
 - **String**: General text (usernames, environment names, descriptions)
-- **Token**: Sensitive data like API keys, passwords, auth tokens
-- **URL**: Website addresses, webhook URLs, API endpoints
 - **Number**: Numeric values like limits, timeouts, port numbers
 - **Boolean**: True/false values for feature flags or options
+- **URL**: Website addresses, webhook URLs, API endpoints
+- **Token**: Sensitive data like API keys, passwords, auth tokens
+- **Certificate**: X.509 certificates and private keys in PEM format (auto-encrypted)
 
 #### Required Field
 - **Check this box** if the variable must have a value
@@ -47,17 +52,39 @@ User Variables make your MCP configurations dynamic and reusable across differen
 - **Enter** a value to use when no other value is provided
 - **Leave empty** for required variables
 - **Use** for sensible defaults like `environment: "production"`
+- **For Certificate type**: Provide PEM format certificate/key data
 
-#### Example Value
-- **Provide** a sample value to help users understand the format
-- **For tokens**: `"sk-abc123..."`
-- **For URLs**: `"https://api.example.com"`
-- **For environments**: `"staging"`
+#### If Not Exist Toggle
+- **Check this box** to only apply this variable if the AI model doesn't provide a value for the field
+- **By default**, user variables always override model parameters
+- **Use** for fallback values when the model may provide its own data
 
-### Save Your Variable
-1. **Click** the **"Save"** button next to the variable
-2. **The variable appears** in your variables list
-3. **Repeat** for each variable you need
+### Managing Variables
+1. **Variables appear** in collapsible cards showing type, name, and description
+2. **Click** a variable card to expand and edit its details
+3. **Variables display badges** indicating:
+   - Type (String, Number, Boolean, etc.)
+   - Required status
+   - Sensitive status
+   - Certificate auto-encryption
+   - If Not Exist condition
+4. **Delete** variables using the trash icon on each card
+5. **All changes are saved** when you save the MCP configuration
+
+### AI-Powered Description Generation
+1. **Click** the sparkle icon (✨) next to the Description field
+2. **AI analyzes** the variable name, type, and settings to generate a helpful description
+3. **Review** the suggested description
+4. **Click "Apply"** to use the suggestion or edit it further
+5. **This helps** create clear, consistent documentation for your variables
+
+### Certificate Variables
+Certificate type variables have special features:
+- **Auto-encrypted**: Certificate data is automatically encrypted when stored, regardless of the sensitive setting
+- **PEM format**: Designed for X.509 certificates and private keys in PEM format
+- **Upload support**: During deployment, you can upload certificate files which will be read and stored securely
+- **Use cases**: SOAP WS-Security, X.509 authentication, SSL/TLS client certificates
+- **Displayed badge**: Shows "Auto-Encrypted" badge in the variable card
 
 ## Step 2: Use Variables in REST API Configuration
 
@@ -189,10 +216,11 @@ You can reference other variables in your default values:
 ### Variable Input Types
 **Different variable types show different inputs**:
 - **String variables**: Regular text boxes
-- **Token variables**: Password fields (dots instead of text)
-- **Boolean variables**: Checkboxes
 - **Number variables**: Number input boxes
+- **Boolean variables**: Checkboxes
 - **URL variables**: Text boxes with URL validation
+- **Token variables**: Password fields (dots instead of text) with show/hide toggle
+- **Certificate variables**: Text boxes for PEM format data with file upload support
 
 ### Fill in Test Values
 **Enter values for your variables**:

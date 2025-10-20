@@ -846,7 +846,5 @@ ADMIN_PASS="password123"  # Visible in process lists and logs
 
 ## Related Topics
 
-- [Authentication Configuration](../configuration/authentication.md)
 - [Storage & Encryption](storage-encryption.md)
-- [API Reference](../api-reference/admin-api.md)
-- [Deployment Guide](../deployment/docker.md)
+- [Authentication Configuration](../creating-mcps/authentication.md)

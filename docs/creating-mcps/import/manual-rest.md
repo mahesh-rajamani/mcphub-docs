@@ -4,10 +4,7 @@ Import REST endpoint configurations from existing cURL commands.
 
 ## Accessing cURL Import
 
-1. Open MCP Studio
-2. Select **REST** protocol
-3. Click **Add Endpoint**
-4. Select **Import from cURL**
+This feature is only supported for REST endpoints in the Endpoints tab. The cURL import widget can be opened by clicking the **"Import curl"** button in the Endpoints tab.
 
 ## Supported cURL Features
 
@@ -57,3 +54,5 @@ The system automatically converts:
 - Query parameters to endpoint parameters
 - Request body to body parameters
 - HTTP method to endpoint method
+
+**Path Parameters**: If any part of the URL needs to be made into a path parameter, you can change that part with `{paramName}` syntax. For example, change `https://api.example.com/users/123` to `https://api.example.com/users/{userId}` to make `123` a path parameter.

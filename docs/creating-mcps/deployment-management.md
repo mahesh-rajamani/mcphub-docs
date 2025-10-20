@@ -87,39 +87,6 @@ For MCPs with OAuth2 authentication:
 - **Authentication Complete**: Confirmation when OAuth2 flow is successful
 - **Token Management**: Automatic token refresh and management
 
-## Deployment Environments
-
-### Environment Management
-
-MCPHub supports deployment to different environments:
-
-#### Development Environment
-- **Local Testing**: Deploy to local development environment
-- **Rapid Iteration**: Quick deployment for testing changes
-- **Debug Mode**: Enhanced logging and error reporting
-
-#### Staging Environment
-- **Pre-Production Testing**: Validate configurations before production
-- **Integration Testing**: Test with staging data and services
-- **Performance Testing**: Validate performance characteristics
-
-#### Production Environment
-- **Production Deployment**: Deploy to live production environment
-- **Security Considerations**: Enhanced security and monitoring
-- **Monitoring**: Production monitoring and alerting
-
-### Environment-Specific Configuration
-
-#### Variable Substitution
-- **Development**: `{{devApiKey}}`, `{{devBaseUrl}}`
-- **Staging**: `{{stagingApiKey}}`, `{{stagingBaseUrl}}`
-- **Production**: `{{prodApiKey}}`, `{{prodBaseUrl}}`
-
-#### Tenant Isolation
-- **Tenant-Specific Deployments**: Each tenant has isolated deployments
-- **Cross-Tenant Security**: No cross-tenant access to deployed MCPs
-- **Tenant Configuration**: Tenant-specific variable values
-
 ## Undeployment
 
 ### Undeploy Process
@@ -174,7 +141,11 @@ Common deployment errors and solutions:
 ### Deployment Monitoring
 
 - **Health Checks**: Automatic health checking of deployed MCPs
+  - Endpoint: `GET /q/health/live`
+  - Returns: Service health status and timestamp
 - **Performance Metrics**: Monitor response times and success rates
+  - Endpoint: `GET /api/metrics`
+  - Returns: Dashboard metrics including total and deployed MCPs count
 - **Error Tracking**: Track and alert on deployment errors
 
 ### Logging
@@ -182,19 +153,3 @@ Common deployment errors and solutions:
 - **Deployment Logs**: Detailed logs of deployment operations
 - **Runtime Logs**: Logs of MCP execution and API calls
 - **Error Logs**: Detailed error information for troubleshooting
-
-## Security Considerations
-
-### Deployment Security
-
-- **Variable Encryption**: Sensitive variables are encrypted
-- **Access Control**: Only authorized users can deploy MCPs
-- **Audit Logging**: All deployment operations are logged
-- **Secure Communication**: Encrypted communication with backend services
-
-### Production Security
-
-- **Authentication Required**: All production deployments require authentication
-- **Variable Masking**: Sensitive variables are masked in logs and UI
-- **Secure Storage**: Encrypted storage of configuration and variables
-- **Access Monitoring**: Monitor and log all access to deployed MCPs

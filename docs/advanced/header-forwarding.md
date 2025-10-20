@@ -445,7 +445,5 @@ Header forwarding works across all supported protocols:
 
 ## Related Topics
 
-- [Authentication Configuration](../configuration/authentication.md)
-- [User Variables](../creating-mcps/variables/overview.md) 
-- [Testing MCPs](../testing/mcp-testing.md)
-- [Admin API](../api-reference/admin-api.md)
+- [User Variables](../creating-mcps/variables/overview.md)
+- [Authentication Configuration](../creating-mcps/authentication.md)

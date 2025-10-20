@@ -1,198 +1,103 @@
 # Export and Import Configuration
 
-MCPHub provides Universal Schema configuration export and import capabilities that allow you to share MCP configurations, create backups, and move configurations between environments or MCPHub instances.
+MCPHub allows you to export MCP configurations as JSON files and import them to share configurations, create backups, or move configurations between environments.
 
-## Overview
+## Exporting MCP Configurations
 
-Universal Schema export/import functionality includes:
-- **JSON Export**: Export configurations as Universal Schema JSON files
-- **JSON Import**: Import existing Universal Schema JSON configurations
-- **Bulk Export**: Export multiple configurations as a ZIP archive
-- **File Upload**: Import configurations from JSON files
-- **Environment Migration**: Move configurations between different MCPHub instances
+### Export Selected Configurations
 
-## Exporting Configurations
+Export one or more MCP configurations:
 
-### Single Configuration Export
+1. **Navigate to MCP List**: Go to the main MCP configurations screen
+2. **Select MCPs**: Click the checkboxes next to the MCPs you want to export
+   - Select one MCP to export a single configuration
+   - Select multiple MCPs to export several configurations at once
+3. **Click Export Button**: Click the **"Export X MCPs"** button that appears at the top
+   - Shows "Export 1 MCPs" for single configuration
+   - Shows "Export 2 MCPs", "Export 3 MCPs", etc. for multiple configurations
+4. **ZIP Downloaded**: A ZIP file containing all selected configurations is downloaded
 
-#### From Configuration Editor
-1. Open any MCP configuration in the editor
-2. Copy the JSON content directly from the schema editor
-3. Save the content to a `.json` file
+**Export File Contents:**
+- Individual JSON files for each selected MCP
+- Filename format: `{mcpName}_v{version}.json`
+- Example: `payment-api_v1.2.3.json`
+- ZIP filename: `mcp-configurations-{date}.zip`
 
-#### Export Process
+**Note:** Even when exporting a single MCP, the download is a ZIP file containing one JSON file.
+
+### What Gets Exported
+
+When you export an MCP configuration:
+
+- ✅ **Complete Configuration**: All endpoints, user variables, protocol settings, and metadata
+- ✅ **Tenant ID**: The tenant ID is included in the export
+- ✅ **Version Information**: Version number and metadata
+- ✅ **Authentication Config**: Authentication type and settings (OAuth, JWT, etc.)
+- ❌ **Variable Values**: User variable values (like API keys, tokens) are NOT exported for security
+
+## Importing MCP Configurations
+
+### Import from JSON
+
+Import an MCP configuration from a Universal Schema JSON file:
+
+1. **Navigate to MCP List**: Go to the main MCP configurations screen
+2. **Click Import Button**: Click the **"Import Schema"** button
+3. **Choose Import Method**:
+
+   **Option A: Paste JSON**
+   - Paste the Universal Schema JSON content into the text area
+   - Click **"Import Schema"**
+
+   **Option B: Upload File**
+   - Click **"Upload JSON File"**
+   - Select a `.json` file from your computer
+   - The content is loaded automatically
+   - Click **"Import Schema"**
+
+4. **Import Completes**: The configuration is imported and appears in your MCP list
+
+### Important: Tenant ID Matching
+
+⚠️ **Tenant ID Requirement**
+
+When importing an MCP configuration, the **tenant ID in the JSON file must match your currently configured tenant ID**.
+
+- **Export includes tenant ID**: When you export a configuration, the tenant ID is saved in the JSON
+- **Import validates tenant**: During import, the system checks if the tenant ID matches your current tenant setting
+- **Mismatch handling**: If the tenant IDs don't match, you need to either:
+  - Change your current tenant ID in Settings to match the export
+  - Edit the JSON file to change the `tenantId` field to match your current tenant
+
+**Example:**
+
 ```json
 {
   "mcpName": "payment-api",
+  "tenantId": "production",  // <-- This must match your current tenant
   "description": "Payment processing API",
-  "tenantId": "production",
-  "userMetadata": {
-    "version": "1.2.3"
-  },
-  "baseConfigs": {
-    "rest": {
-      "baseUrl": "https://api.example.com",
-      "serviceName": "Payment Service"
-    }
-  },
-  "endpoints": [
-    {
-      "name": "processPayment",
-      "apiType": "rest",
-      "method": "POST",
-      "path": "/payments",
-      "description": "Process a payment transaction"
-    }
-  ]
+  ...
 }
 ```
 
-### Bulk Configuration Export
+If your current tenant is "default" but the JSON has "production", the import will fail. You must update either:
+- Your tenant setting: Go to Settings → Change Tenant ID to "production"
+- The JSON file: Edit `"tenantId": "production"` to `"tenantId": "default"`
 
-#### Multi-Select Export
-1. Navigate to the MCP configurations list
-2. Select multiple configurations using checkboxes
-3. Click the **Export X MCPs** button
-4. A ZIP file is automatically downloaded
+### Import Validation
 
-#### Export Package Contents
-The ZIP file contains:
-- Individual JSON files for each selected configuration
-- Filename format: `{mcpName}_v{version}.json`
-- Example: `payment-api_v1.2.3.json`
+The system validates your import:
 
-#### Export Behavior
-- **Complete Export**: All configuration data is exported
-- **Version Specific**: Each version is exported as a separate file
-- **No Sensitive Data**: User variable values are not included in exports
-- **Tenant Context**: Original tenant ID is preserved
+- ✅ **JSON Format**: Must be valid JSON syntax
+- ✅ **Required Fields**: Must have `mcpName` and `endpoints`
+- ✅ **Tenant Match**: Tenant ID must match your current tenant
+- ✅ **Duplicate Check**: Prevents importing if the same MCP name and version already exist
 
-## Importing Configurations
+### After Import
 
-### Universal Schema JSON Import
+Once imported successfully:
 
-#### Accessing Import Feature
-1. Navigate to the MCP configurations list
-2. Click the **Import Schema** button
-3. The import dialog opens
-
-#### Import Methods
-
-**Method 1: Paste JSON Content**
-1. Paste Universal Schema JSON directly into the text area
-2. Review the configuration
-3. Click **Import Schema**
-
-**Method 2: Upload JSON File**
-1. Click **Upload JSON File** button
-2. Select a `.json` file from your computer
-3. The file content is loaded into the text area
-4. Click **Import Schema**
-
-#### Import Validation
-
-The system validates:
-- **JSON Format**: Valid JSON syntax
-- **Required Fields**: Presence of `mcpName` and `endpoints`
-- **Duplicate Check**: Prevents importing configurations that already exist
-- **Version Conflicts**: Checks for existing versions with the same name
-
-#### Import Process
-```typescript
-// Example validation and import
-{
-  "validation": {
-    "jsonValid": true,
-    "requiredFields": ["mcpName", "endpoints"],
-    "duplicateCheck": "payment-api v1.2.3 already exists"
-  },
-  "import": {
-    "status": "success",
-    "mcpName": "payment-api-new",
-    "endpointsCreated": 5,
-    "variablesCreated": 3
-  }
-}
-```
-
-### Import Behavior
-
-#### Configuration Creation
-- **New Configuration**: Creates a completely new configuration
-- **Tenant Assignment**: Uses current user's tenant context
-- **Version Preservation**: Maintains original version if specified
-- **Complete Import**: All endpoints, variables, and settings are imported
-
-#### Import Results
-Upon successful import:
-- New configuration appears in the MCP list
-- Configuration is saved but not deployed
-- Success message shows import details
-- Configuration can be immediately edited or deployed
-
-## Configuration Format
-
-### Universal Schema Structure
-
-```json
-{
-  "mcpName": "string",
-  "description": "string", 
-  "tenantId": "string",
-  "userMetadata": {
-    "version": "string",
-    "category": "string"
-  },
-  "userVariables": [
-    {
-      "name": "string",
-      "description": "string",
-      "type": "string|number|boolean|url|token",
-      "required": boolean,
-      "sensitive": boolean
-    }
-  ],
-  "baseConfigs": {
-    "rest": {
-      "baseUrl": "string",
-      "serviceName": "string",
-      "auth": {
-        "type": "static|jwt|oauth2",
-        "headers": {},
-        "jwtConfig": {},
-        "oauth2Config": {}
-      }
-    },
-    "grpc": {
-      "serverUrl": "string",
-      "serviceName": "string"
-    }
-  },
-  "endpoints": [
-    {
-      "name": "string",
-      "apiType": "rest|grpc",
-      "method": "GET|POST|PUT|DELETE|PATCH",
-      "path": "string",
-      "description": "string",
-      "enabled": boolean,
-      "queryParameters": [],
-      "pathParameters": [],
-      "bodyParameters": []
-    }
-  ]
-}
-```
-
-### Required Fields
-- `mcpName`: Unique identifier for the MCP
-- `endpoints`: Array of at least one endpoint
-- `userMetadata.version`: Version identifier (recommended)
-
-### Optional Fields  
-- `description`: Human-readable description
-- `userVariables`: Dynamic configuration variables
-- `baseConfigs`: Protocol-specific base configurations
-- `tenantId`: Tenant context (auto-assigned if missing)
-
-
+- **Saved Configuration**: The MCP appears in your configurations list
+- **Not Deployed**: Configuration is saved but not automatically deployed
+- **Ready to Use**: You can edit, deploy, or test the configuration immediately
+- **Variables Need Values**: If the configuration has user variables, you'll need to provide values before deploying

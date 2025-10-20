@@ -10,10 +10,29 @@ The Settings Widget provides access to:
 - **Tenant Management**: Configure tenant ID for multi-tenant isolation
 - **AI Model Configuration**: Set up AI providers for testing and suggestions
 
+## Initial Configuration: Welcome Workflow
+
+When you first access MCPHub Studio, you'll be guided through a **Welcome Workflow** that presents the settings configuration dialog. This one-time setup wizard helps you configure the essential settings to get started:
+
+### Welcome Workflow Steps
+
+1. **First Launch**: When you open MCPHub Studio for the first time, the Welcome dialog automatically appears
+2. **Configure Settings**: You'll be guided to configure:
+   - Backend URL connection
+   - Tenant ID (optional, defaults to "default")
+   - AI model configuration (optional, can be configured later)
+3. **Skip Option**: You can skip the AI configuration and set it up later through the Settings Widget
+4. **Complete Setup**: Once configured, the settings are saved and you can start using MCPHub Studio
+
+**After Initial Setup**: Once you've completed the Welcome Workflow, these settings can be updated anytime through the Settings Widget.
+
 ## Accessing the Settings Widget
 
-1. **From Main Navigation**: Click the settings icon in the top navigation bar
+After the initial Welcome Workflow, you can access and update settings:
+
+1. **From Main Navigation**: Click the settings icon (⚙️) in the top navigation bar
 2. **From Toolbar**: Look for the settings/gear icon in the main interface
+3. **Anytime**: Settings can be updated whenever needed
 
 ## Backend Configuration
 
@@ -50,34 +69,54 @@ Accept: application/json
 
 ## Admin API Configuration
 
-### External Authentication
-Admin API authentication is now handled externally by API Gateway:
+### Authentication Configuration
 
-**Configuration:**
-- **Authentication**: Handled by API Gateway (OAuth2, SAML, etc.)
-- **Session Management**: Browser cookies manage authentication state
-- **No Credentials**: No username/password configuration needed in frontend
+If your Admin API is secured by authentication, you can configure authentication headers in the Settings Widget:
 
-**How it Works:**
-1. Admin users authenticate via API Gateway login page
-2. API Gateway sets secure session cookies
-3. Browser automatically sends cookies with admin API requests
-4. Backend receives user context via forwarded headers
+**Authentication Header Settings:**
+- **Header Name**: The name of the authentication header (e.g., `Authorization`, `X-API-Key`)
+- **Header Value**: The authentication value (e.g., `Bearer <token>`, API key)
+
+**Configuration Steps:**
+1. Open the Settings Widget
+2. Navigate to Admin API Configuration section
+3. Enter the **Authentication Header Name** (e.g., `Authorization`)
+4. Enter the **Authentication Header Value** (e.g., `Bearer your-admin-token`)
+5. Click "Save Settings" to persist the configuration
+
+**Common Authentication Patterns:**
+
+#### Bearer Token
+```
+Header Name: Authorization
+Header Value: Bearer your-admin-api-token
+```
+
+#### API Key
+```
+Header Name: X-API-Key
+Header Value: your-admin-api-key
+```
+
+#### Custom Authentication
+```
+Header Name: X-Auth-Token
+Header Value: your-custom-token
+```
 
 ### Admin Connection Test
-Tests admin API connectivity:
+Tests admin API connectivity with configured authentication:
 ```http
 GET /admin/mcp/status
 Accept: application/json
-Cookie: <session-cookies>
+<Authentication-Header-Name>: <Authentication-Header-Value>
 X-Tenant-ID: <tenant-id>
 ```
 
-**External Authentication Benefits:**
-- Enterprise SSO integration (Google, Azure AD, Okta)
-- No credential storage in browser
-- Secure session management
-- Centralized authentication policies
+**Test Results:**
+- ✅ **Success**: Green badge confirming admin API connection
+- ❌ **Failure**: Red badge with authentication or connection errors
+- ⏳ **Testing**: Loading indicator during test
 
 ## Tenant Management
 
@@ -134,17 +173,5 @@ For self-hosted or custom AI services:
 - Requires confirmation
 
 ### Settings Persistence
-- **Storage**: Browser localStorage  
+- **Storage**: Browser localStorage
 - **Session Based**: Settings persist during browser session
-
-## Connection Testing Features
-
-### Test Indicators
-- **Visual Feedback**: Color-coded badges for connection status
-- **Error Messages**: Detailed error descriptions with status codes
-- **Real-time Updates**: Immediate feedback during testing
-
-### Test Behavior
-- **Error Handling**: Comprehensive error reporting with status codes
-- **Real-time Feedback**: Immediate response during testing
-
