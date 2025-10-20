@@ -19,14 +19,12 @@ const sidebars: SidebarsConfig = {
           type: 'category',
           label: 'Import Methods',
           items: [
-            'creating-mcps/import/openapi',
-            'creating-mcps/import/grpc',
+            'creating-mcps/manual-configuration',
+            'creating-mcps/import-methods',
             'creating-mcps/import/manual-rest',
-            'creating-mcps/import/custom-code',
           ],
         },
         'creating-mcps/variables/overview',
-        'creating-mcps/manual-configuration',
         'creating-mcps/authentication',
       ],
     },
@@ -36,17 +34,22 @@ const sidebars: SidebarsConfig = {
       items: [
         'creating-mcps/settings-widget',
         'creating-mcps/export-import-config',
-        'creating-mcps/versioning-merge',
         'creating-mcps/deployment-management',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Integrations',
+      items: [
+        'integrations/overview',
+        'advanced/langchain-integration',
       ],
     },
     {
       type: 'category',
       label: 'Advanced',
       items: [
-        'advanced/langchain-integration',
         'advanced/storage-encryption',
-        'advanced/admin-api-direct',
       ],
     },
   ],
