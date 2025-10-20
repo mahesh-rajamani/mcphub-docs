@@ -8,9 +8,9 @@ const config: Config = {
   favicon: 'img/favicon.png',
 
   // Set the production url of your site here
-  url: 'https://mahesh-rajamani.github.io',
+  url: 'https://docs.synapsetech.app',
   // Set the /<baseUrl>/ pathname under which your site is served
-  baseUrl: '/mcphub-docs/',
+  baseUrl: '/',
 
   // GitHub pages deployment config
   organizationName: 'mahesh-rajamani',
