@@ -84,7 +84,7 @@ const config: Config = {
           items: [
             {
               label: 'Quick Start',
-              to: '/docs/getting-started/quick-install',
+              to: '/docs/latest/getting-started/quick-install',
             },
           ],
         },
