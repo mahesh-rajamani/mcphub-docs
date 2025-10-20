@@ -89,7 +89,6 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} MCPHub. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
