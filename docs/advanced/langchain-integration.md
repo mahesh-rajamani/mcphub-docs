@@ -5,17 +5,17 @@ Learn how to integrate your MCPHub-deployed MCP servers with LangChain for power
 ## Overview
 
 This guide shows you how to:
-- Set up a Python environment with LangChain
+- Set up a Python environment with LangChain and LangGraph
 - Connect to your MCPHub-deployed MCP servers
-- Use MCP tools as LangChain tools
-- Build AI applications that can call your APIs
+- Use MCP tools through the LangChain MCP adapter
+- Build interactive AI agents that can call your APIs
 
 ## Prerequisites
 
 - MCPHub running with deployed MCPs ([Quick Install](../getting-started/quick-install.md))
 - Python 3.8+ installed
 - OpenAI API key
-- Basic familiarity with Python
+- Basic familiarity with Python and async programming
 
 ## Step 1: Install Required Packages
 
@@ -23,8 +23,8 @@ Create a new Python project and install dependencies:
 
 ```bash
 # Create project directory
-mkdir mcphub-langchain-demo
-cd mcphub-langchain-demo
+mkdir mcphub-langchain-agent
+cd mcphub-langchain-agent
 
 # Create virtual environment
 python -m venv venv
@@ -36,7 +36,7 @@ venv\Scripts\activate
 source venv/bin/activate
 
 # Install required packages
-pip install langchain langchain-openai requests python-dotenv
+pip install langchain-mcp-adapters langchain-openai langgraph
 ```
 
 ## Step 2: Set Up Environment Variables
@@ -44,591 +44,637 @@ pip install langchain langchain-openai requests python-dotenv
 Create a `.env` file in your project directory:
 
 ```bash title=".env"
-OPENAI_API_KEY=your_openai_api_key_here
-OPENAI_MODEL=gpt-4
-MCPHUB_BASE_URL=http://localhost:8080
+# MCP Server URL - update with your MCPHub server endpoint
+MCP_URL=http://localhost:3001/system/weather-gov-api/mcp
+
+# Authentication - choose the method your MCP server requires
+# For Basic Auth (username:password encoded in base64):
+BASIC_AUTH=YWRtaW46eW91cl9wYXNzd29yZA==
+
+# For JWT token:
+# JWT_TOKEN=your_jwt_token_here
+
+# For OAuth2 token:
+# OAUTH_TOKEN=your_oauth2_token_here
+
+# OpenAI API Key - required for the AI agent
+OPENAI_API_KEY=sk-proj-your_openai_api_key_here
+
+# Enable MCP debug logging to see HTTP requests (optional)
+DEBUG_MCP=false
+
+# System message to guide the LLM (optional)
+SYSTEM_MESSAGE=When calling tools: 1) Check the tool schema for REQUIRED parameters and always include them. 2) If a tool call fails with an error, DO NOT retry the same call - instead report the error to the user. 3) Only use 'fields' parameter if the user explicitly asks for specific fields.
+
+# Recursion limit for agent (optional, default: 25)
+RECURSION_LIMIT=25
 ```
 
-## Step 3: Download the Sample Code
+**Note on Authentication:**
+- To generate `BASIC_AUTH`: `echo -n "username:password" | base64`
+- Replace `MCP_URL` with your actual MCPHub deployment URL (format: `http://host:port/tenantId/mcpName/mcp`)
+- Get your OpenAI API key from [OpenAI Platform](https://platform.openai.com/api-keys)
 
-Create the main application file:
+## Step 3: Create the Interactive Agent
 
-```python title="mcphub_langchain_demo.py"
+Create a file named `interactive_agent.py`:
+
+```python title="interactive_agent.py"
 #!/usr/bin/env python3
 """
-MCPHub LangChain Integration Demo
-
-This script demonstrates how to use MCPHub-deployed MCP servers
-as tools in LangChain applications.
+Interactive MCP agent using LangChain and LangGraph
 """
-
+import asyncio
 import os
-import json
-import requests
-from typing import List, Dict, Any, Optional
-from dotenv import load_dotenv
-
-from langchain.tools import Tool
-from langchain.agents import AgentType, initialize_agent
+import logging
+import sys
+from pathlib import Path
+from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import ChatOpenAI
-from langchain.schema import BaseMessage, SystemMessage
+from langgraph.prebuilt import create_react_agent
 
-# Load environment variables
-load_dotenv()
+# Set logging to INFO level only
+logging.basicConfig(level=logging.INFO, format='%(name)s - %(levelname)s - %(message)s')
 
-class MCPHubTool:
-    """Wrapper for MCPHub MCP tools to use with LangChain"""
-    
-    def __init__(self, mcp_url: str, tool_name: str, tool_info: Dict[str, Any]):
-        self.mcp_url = mcp_url
-        self.tool_name = tool_name
-        self.tool_info = tool_info
-        self.description = tool_info.get('description', f'Execute {tool_name}')
-        
-    def execute(self, **kwargs) -> str:
-        """Execute the MCP tool and return results"""
-        try:
-            # Prepare the request payload for MCP protocol
-            payload = {
-                "jsonrpc": "2.0",
-                "id": 1,
-                "method": "tools/call",
-                "params": {
-                    "name": self.tool_name,
-                    "arguments": kwargs
-                }
-            }
-            
-            # Make request to MCP server
-            response = requests.post(
-                self.mcp_url,
-                json=payload,
-                headers={"Content-Type": "application/json"},
-                timeout=30
-            )
-            response.raise_for_status()
-            
-            # Parse MCP response
-            result = response.json()
-            if "error" in result:
-                return f"Error: {result['error']['message']}"
-            
-            # Extract and format the result
-            tool_result = result.get("result", {})
-            if isinstance(tool_result, dict):
-                return json.dumps(tool_result, indent=2)
-            return str(tool_result)
-            
-        except requests.exceptions.RequestException as e:
-            return f"Network error: {str(e)}"
-        except Exception as e:
-            return f"Execution error: {str(e)}"
+# Load environment variables from .env file
+def load_env():
+    """Load environment variables from .env file"""
+    env_path = Path(__file__).parent / '.env'
+    if env_path.exists():
+        with open(env_path) as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    os.environ[key] = value
+        print(f"📄 Loaded configuration from {env_path}")
+    else:
+        print(f"⚠️  No .env file found at {env_path}")
 
-class MCPHubIntegration:
-    """Main class for integrating MCPHub with LangChain"""
-    
-    def __init__(self, openai_api_key: str, model_name: str = "gpt-4"):
-        """
-        Initialize MCPHub LangChain integration
-        
-        Args:
-            openai_api_key: Your OpenAI API key
-            model_name: OpenAI model to use (default: gpt-4)
-        """
-        self.llm = ChatOpenAI(
-            api_key=openai_api_key,
-            model=model_name,
-            temperature=0
-        )
-        self.tools = []
-        self.agent = None
-        self.system_prompt = self._create_system_prompt()
-        
-    def _create_system_prompt(self) -> str:
-        """Create a comprehensive system prompt for the AI agent"""
-        return """You are an AI assistant with access to various tools through the Model Context Protocol (MCP).
+# Load .env on import
+load_env()
 
-Your role is to help users interact with different APIs and services by:
+# Check if debug mode is enabled (after loading .env)
+DEBUG_MCP = os.getenv("DEBUG_MCP", "false").lower() == "true"
 
-1. **Understanding User Intent**: Carefully analyze what the user is asking for
-2. **Tool Selection**: Choose the most appropriate tools from those available to you
-3. **Parameter Handling**: Use the correct parameters and formats when calling tools
-4. **Error Handling**: If a tool call fails, explain the issue and suggest alternatives
-5. **Response Formatting**: Present results in a clear, user-friendly manner
+if DEBUG_MCP:
+    # Enable detailed HTTP and MCP logging
+    logging.getLogger("httpx").setLevel(logging.DEBUG)
+    logging.getLogger("httpcore").setLevel(logging.DEBUG)
+    logging.getLogger("mcp").setLevel(logging.DEBUG)
+    print("🔍 MCP Debug logging enabled")
+else:
+    # Reduce HTTP noise in normal mode
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
 
-Guidelines for tool usage:
-- Always read tool descriptions carefully before using them
-- Use exact parameter names and types as specified by the tool
-- If you're unsure about a parameter, ask the user for clarification
-- Provide helpful context about what each tool does
-- Combine multiple tool calls when needed to answer complex questions
-
-When working with data:
-- Format responses clearly and concisely
-- Highlight important information
-- If data seems incomplete or unexpected, mention this to the user
-
-Remember: You have access to real APIs through MCP tools, so your actions can have real effects. Always be careful and confirm with users before making changes to data."""
-        
-    def add_mcp_server(self, mcp_url: str) -> bool:
-        """
-        Add an MCP server and load its tools
-        
-        Args:
-            mcp_url: URL to the MCP server (e.g., http://localhost:8080/swagger-petstore/mcp)
-            
-        Returns:
-            bool: True if successful, False otherwise
-        """
-        try:
-            # Get available tools from MCP server
-            payload = {
-                "jsonrpc": "2.0",
-                "id": 1,
-                "method": "tools/list"
-            }
-            
-            response = requests.post(
-                mcp_url,
-                json=payload,
-                headers={"Content-Type": "application/json"},
-                timeout=10
-            )
-            response.raise_for_status()
-            
-            result = response.json()
-            if "error" in result:
-                print(f"Error loading MCP server {mcp_url}: {result['error']['message']}")
-                return False
-            
-            # Convert MCP tools to LangChain tools
-            mcp_tools = result.get("result", {}).get("tools", [])
-            for tool_info in mcp_tools:
-                tool_name = tool_info["name"]
-                mcp_tool = MCPHubTool(mcp_url, tool_name, tool_info)
-                
-                # Create LangChain tool (capture variables by value to avoid closure issues)
-                def create_tool_func(mcp_tool_instance, current_tool_name, current_tool_info):
-                    def tool_func(*args, **kwargs):
-                        # Handle both string input and kwargs from LangChain
-                        if args and len(args) == 1 and isinstance(args[0], str):
-                            # Try to parse as JSON if it's a string
-                            import json
-                            try:
-                                if args[0].strip():
-                                    parsed_args = json.loads(args[0])
-                                    if isinstance(parsed_args, dict):
-                                        kwargs.update(parsed_args)
-                                    else:
-                                        # JSON parsed successfully but not a dict, treat as single parameter
-                                        raise ValueError("Not a dict")
-                                # If empty string or parsing fails, use empty kwargs
-                            except (json.JSONDecodeError, ValueError):
-                                # If not valid JSON dict, try to map to the first required parameter
-                                if args[0].strip():
-                                    # Get the input schema to find the correct parameter name
-                                    input_schema = current_tool_info.get('inputSchema', {})
-                                    properties = input_schema.get('properties', {})
-                                    required = input_schema.get('required', [])
-                                    
-                                    # Use the first required parameter if available
-                                    if required and required[0] in properties:
-                                        kwargs = {required[0]: args[0]}
-                                    # Otherwise use the first parameter
-                                    elif properties:
-                                        first_param = list(properties.keys())[0]
-                                        kwargs = {first_param: args[0]}
-                                    # If no parameters defined, leave kwargs empty (don't create artificial parameters)
-                        
-                        return mcp_tool_instance.execute(**kwargs)
-                    return tool_func
-                
-                langchain_tool = Tool(
-                    name=tool_name,
-                    description=mcp_tool.description,
-                    func=create_tool_func(mcp_tool, tool_name, tool_info)
-                )
-                
-                self.tools.append(langchain_tool)
-                print(f"Added tool: {tool_name}")
-            
-            print(f"Successfully loaded {len(mcp_tools)} tools from {mcp_url}")
-            return True
-            
-        except Exception as e:
-            print(f"Failed to load MCP server {mcp_url}: {str(e)}")
-            return False
-    
-    def initialize_agent(self):
-        """Initialize the LangChain agent with loaded tools"""
-        if not self.tools:
-            raise ValueError("No tools loaded. Add at least one MCP server first.")
-        
-        # Add system prompt as agent kwargs
-        agent_kwargs = {
-            "system_message": self.system_prompt
-        }
-        
-        self.agent = initialize_agent(
-            tools=self.tools,
-            llm=self.llm,
-            agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-            verbose=True,
-            handle_parsing_errors=True,
-            agent_kwargs=agent_kwargs
-        )
-        print(f"Agent initialized with {len(self.tools)} tools and system prompt")
-    
-    def query(self, question: str) -> str:
-        """
-        Ask the AI agent a question
-        
-        Args:
-            question: Natural language question
-            
-        Returns:
-            str: Agent's response
-        """
-        if not self.agent:
-            raise ValueError("Agent not initialized. Call initialize_agent() first.")
-        
-        try:
-            # Use invoke instead of deprecated run method
-            response = self.agent.invoke({"input": question})
-            # Extract the output from the response
-            if isinstance(response, dict) and "output" in response:
-                return response["output"]
-            return str(response)
-        except Exception as e:
-            return f"Error processing query: {str(e)}"
-    
-    def get_available_tools(self) -> List[str]:
-        """Get list of available tool names and descriptions"""
-        tool_info = []
-        for tool in self.tools:
-            tool_info.append(f"- {tool.name}: {tool.description}")
-        return tool_info
-
-def main():
-    """Main function to demonstrate MCPHub + LangChain integration"""
-    
-    # Configuration
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4")
-    MCPHUB_BASE_URL = os.getenv("MCPHUB_BASE_URL", "http://localhost:8080")
-    
-    # Validate configuration
-    if not OPENAI_API_KEY:
-        print("Error: OPENAI_API_KEY not found in environment variables")
-        print("Please set your OpenAI API key in the .env file")
-        return
-    
-    print("🚀 MCPHub + LangChain Integration Demo")
-    print("=" * 50)
-    
-    # Initialize integration
-    integration = MCPHubIntegration(OPENAI_API_KEY, OPENAI_MODEL)
-    
-    # Add MCP servers (modify these URLs based on your deployed MCPs)
-    mcp_urls = [
-        f"{MCPHUB_BASE_URL}/default/person-rest-oauth/mcp",
-        # Add more MCP URLs here as needed
-        # f"{MCPHUB_BASE_URL}/default/your-other-mcp/mcp",
-    ]
-    
-    print("\n📡 Loading MCP servers...")
-    for url in mcp_urls:
-        print(f"Loading: {url}")
-        integration.add_mcp_server(url)
-    
-    # Initialize agent
-    print("\n🤖 Initializing AI agent...")
+# Apply the patches for JSON-RPC compatibility
+def patch_jsonrpc_validation():
+    """Patch JSON-RPC message validation to fix id=null issues"""
     try:
-        integration.initialize_agent()
-    except ValueError as e:
-        print(f"Error: {e}")
+        from mcp.types import JSONRPCMessage
+
+        original_model_validate_json = JSONRPCMessage.model_validate_json
+
+        @classmethod
+        def patched_model_validate_json(cls, json_data, **kwargs):
+            if isinstance(json_data, (str, bytes)):
+                import json
+                data = json.loads(json_data)
+            else:
+                data = json_data
+
+            # Handle empty dict responses (notifications that return {})
+            if isinstance(data, dict) and not data:
+                # These are notification acknowledgments - create a minimal valid response
+                data = {"jsonrpc": "2.0", "result": {}, "id": 0}
+            elif isinstance(data, dict) and data.get('jsonrpc') == '2.0':
+                if 'result' in data and data.get('id') is None:
+                    data['id'] = 1
+                elif 'method' in data and data.get('id') is None:
+                    data['id'] = 1
+
+            fixed_json = json.dumps(data) if not isinstance(json_data, str) else json.dumps(data)
+            return original_model_validate_json(fixed_json, **kwargs)
+
+        JSONRPCMessage.model_validate_json = patched_model_validate_json
+
+    except ImportError:
+        pass
+
+def patch_list_tools_result():
+    try:
+        from mcp.types import ListToolsResult
+
+        original_model_validate = ListToolsResult.model_validate
+
+        @classmethod
+        def patched_model_validate(cls, obj, **kwargs):
+            if isinstance(obj, dict) and not obj:
+                obj = {"tools": []}
+            elif isinstance(obj, dict) and "tools" not in obj:
+                obj["tools"] = []
+
+            return original_model_validate(obj, **kwargs)
+
+        ListToolsResult.model_validate = patched_model_validate
+
+    except ImportError:
+        pass
+
+def patch_output_schema_validation():
+    """Disable output schema validation to accept text responses"""
+    try:
+        from mcp.client.session import ClientSession
+
+        # Replace the validation method with a no-op
+        async def patched_validate_tool_result(self, name: str, result) -> None:
+            """Skip output schema validation"""
+            pass
+
+        ClientSession._validate_tool_result = patched_validate_tool_result
+        print("✅ Disabled output schema validation")
+
+    except ImportError as e:
+        print(f"⚠️  Could not patch output schema validation: {e}")
+        pass
+
+# Apply patches
+patch_jsonrpc_validation()
+patch_list_tools_result()
+patch_output_schema_validation()
+
+# Global variables to cache tools and agent
+cached_tools = None
+cached_agent = None
+cached_client = None
+
+async def initialize_agent():
+    """Initialize the MCP client, tools, and agent once at startup"""
+    global cached_tools, cached_agent, cached_client
+
+    # Get configuration from environment (loaded from .env)
+    mcp_url = os.getenv("MCP_URL", "http://localhost:3001/system/weather-gov-api/mcp")
+    openai_key = os.getenv("OPENAI_API_KEY")
+
+    if not openai_key:
+        print("❌ OpenAI API key not found in .env file")
+        print("   Please set OPENAI_API_KEY in your .env file")
+        return False
+
+    print(f"🎯 Target: {mcp_url}")
+
+    try:
+        print("1. Connecting to MCPHub and discovering tools...")
+
+        # Get authentication if available
+        jwt_token = os.getenv("JWT_TOKEN")
+        oauth_token = os.getenv("OAUTH_TOKEN")
+        basic_auth = os.getenv("BASIC_AUTH")
+
+        # Configure MCP client with authentication headers
+        headers = {}
+        if jwt_token:
+            headers["Authorization"] = f"Bearer {jwt_token}"
+        elif oauth_token:
+            headers["Authorization"] = f"Bearer {oauth_token}"
+        elif basic_auth:
+            headers["Authorization"] = f"Basic {basic_auth}"
+
+        client_config = {
+            "transport": "streamable_http",
+            "url": mcp_url
+        }
+
+        if headers:
+            client_config["headers"] = headers
+
+        cached_client = MultiServerMCPClient({
+            "mcphub_server": client_config
+        })
+
+        # Get tools once
+        cached_tools = await cached_client.get_tools()
+
+        if not cached_tools:
+            print("   No tools available")
+            return False
+
+        print(f"   ✅ Found {len(cached_tools)} tools")
+
+        print("\n2. Initializing OpenAI LLM...")
+        llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, api_key=openai_key)
+
+        print("3. Creating React agent...")
+        cached_agent = create_react_agent(llm, cached_tools)
+
+        print("✅ Agent initialized and ready!")
+        return True
+
+    except Exception as e:
+        print(f"❌ Failed to initialize agent: {e}")
+        return False
+
+async def execute_user_request(user_input, system_message=None, debug=False):
+    """Execute a user request using the cached MCP agent"""
+    global cached_agent
+
+    if not cached_agent:
+        print("❌ Agent not initialized")
         return
-    
-    # Show available tools
-    print("\n🔧 Available Tools:")
-    available_tools = integration.get_available_tools()
-    for tool_info in available_tools:
-        print(f"  {tool_info}")
-    
-    # Interactive demo
-    print("\n✨ Ready for questions! Type 'quit' to exit.")
-    print("\nExample queries:")
-    print("- 'Create a person named John Doe with email john@example.com'")
-    print("- 'Get all persons from the system'")
-    print("- 'Find a person by the name John'")
-    print("- 'What tools are available to me?'")
-    print("- 'Create a person with family information including spouse and children'")
-    
-    while True:
+
+    try:
+        print(f"🔄 Processing request: {user_input}")
+        print("-" * 60)
+
+        # Prepare messages with optional system message
+        messages = []
+        if system_message:
+            messages.append({"role": "system", "content": system_message})
+        messages.append({"role": "user", "content": user_input})
+
+        # Execute the request with configurable recursion limit (default: 25)
+        recursion_limit = int(os.getenv("RECURSION_LIMIT", "25"))
+        result = await cached_agent.ainvoke(
+            {"messages": messages},
+            {"recursion_limit": recursion_limit}
+        )
+
+        if debug:
+            print("\n📋 Agent Response:")
+            print("=" * 60)
+
+            # Display the conversation with step counter
+            step_num = 0
+            for message in result["messages"]:
+                message_type = message.__class__.__name__
+
+                if message_type == 'HumanMessage':
+                    print(f"👤 USER: {message.content}\n")
+                elif message_type == 'AIMessage':
+                    step_num += 1
+                    if hasattr(message, 'tool_calls') and message.tool_calls:
+                        print(f"🤖 STEP {step_num} - ASSISTANT is calling tools:")
+                        for tool_call in message.tool_calls:
+                            import json
+                            tool_name = tool_call.get('name', 'unknown')
+                            tool_args = tool_call.get('args', {})
+                            tool_id = tool_call.get('id', 'unknown')
+
+                            print(f"   📞 TOOL CALL: {tool_name}")
+                            print(f"      ID: {tool_id}")
+
+                            # Show the full MCP request that will be made
+                            print(f"      🔍 MCP REQUEST:")
+                            print(f"         Method: tools/call")
+                            print(f"         Tool: {tool_name}")
+                            print(f"         Arguments:")
+                            for key, value in tool_args.items():
+                                print(f"            {key}: {json.dumps(value, indent=15)}")
+                        print()
+                    elif message.content:
+                        print(f"🤖 STEP {step_num} - ASSISTANT: {message.content}\n")
+                elif message_type == 'ToolMessage':
+                    print(f"🔧 TOOL RESULT:")
+                    print(f"   Tool: {getattr(message, 'name', 'unknown')}")
+                    # Check if result indicates an error
+                    content = message.content
+                    if isinstance(content, str):
+                        if 'error' in content.lower() or 'exception' in content.lower() or 'failed' in content.lower():
+                            print(f"   ⚠️  ERROR DETECTED:")
+                            print(f"   {content[:500]}")
+                        else:
+                            print(f"   ✅ SUCCESS:")
+                            print(f"   {content[:500]}")
+                    else:
+                        print(f"   {content}")
+                    print()
+
+            print("=" * 60)
+        else:
+            # Compact output - just show final response
+            for message in result["messages"]:
+                message_type = message.__class__.__name__
+                if message_type == 'AIMessage' and message.content and not (hasattr(message, 'tool_calls') and message.tool_calls):
+                    print(f"\n🤖 {message.content}")
+
+        print("✅ Request completed!")
+
+    except Exception as e:
+        if "recursion_limit" in str(e).lower():
+            print(f"\n⚠️ Request took too many steps to complete (limit: {recursion_limit})")
+            if debug:
+                print("   This usually means the agent is stuck in a loop.")
+                print("\n🔍 Check the TOOL RESULTS above for errors")
+            else:
+                print("   Run with --debug flag to see detailed step-by-step output")
+        else:
+            print(f"❌ Agent failed with error: {e}")
+            if debug:
+                import traceback
+                print("\n🔍 Full traceback:")
+                traceback.print_exc()
+
+async def cleanup():
+    """Clean up resources"""
+    global cached_client
+    if cached_client:
         try:
-            question = input("\n❓ Your question: ").strip()
-            
-            if question.lower() in ['quit', 'exit', 'q']:
+            await cached_client.aclose()
+        except AttributeError:
+            pass
+
+async def interactive_mode(debug=False):
+    """Run in interactive mode"""
+    print("🤖 MCPHub Interactive Agent")
+    print("=" * 50)
+
+    # Initialize agent once at startup
+    if not await initialize_agent():
+        return
+
+    # Check for custom system message
+    system_message = os.getenv("SYSTEM_MESSAGE")
+    if system_message:
+        print(f"📋 Using custom system message: {system_message[:100]}{'...' if len(system_message) > 100 else ''}")
+
+    if debug:
+        print("🐛 DEBUG MODE ENABLED")
+
+    print("\n💡 Type your request and press Enter")
+    print("   Type 'exit' or 'quit' to end")
+    print("=" * 50)
+
+    print("\n📝 Example requests:")
+    print("   - What are the current weather alerts for California?")
+    print("   - Get weather forecast for New York")
+    print("   - Search for persons named Smith")
+    print("=" * 50)
+
+    try:
+        while True:
+            print("\n")
+            user_input = input("👤 You: ").strip()
+
+            if user_input.lower() in ['exit', 'quit']:
                 print("👋 Goodbye!")
                 break
-            
-            if not question:
+            elif not user_input:
                 continue
-            
-            print("\n🤔 Thinking...")
-            response = integration.query(question)
-            print(f"\n💡 Response: {response}")
-            
-        except KeyboardInterrupt:
-            print("\n👋 Goodbye!")
-            break
-        except Exception as e:
-            print(f"\n❌ Error: {e}")
+
+            await execute_user_request(user_input, system_message, debug)
+
+    except KeyboardInterrupt:
+        print("\n\n👋 Session interrupted. Goodbye!")
+    finally:
+        await cleanup()
+
+async def main():
+    """Main entry point"""
+    # Check for --debug flag
+    debug = '--debug' in sys.argv
+    if debug:
+        sys.argv.remove('--debug')
+
+    if len(sys.argv) > 1:
+        # If command line argument provided, execute it and exit
+        user_input = ' '.join(sys.argv[1:])
+        print(f"📝 Executing: {user_input}")
+
+        # Initialize agent for single command
+        if await initialize_agent():
+            system_message = os.getenv("SYSTEM_MESSAGE")
+            await execute_user_request(user_input, system_message, debug)
+            await cleanup()
+    else:
+        # Interactive mode
+        await interactive_mode(debug)
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
 ```
 
-## Step 4: Configure Your Environment
+## Step 4: Run the Interactive Agent
 
-1. **Get your OpenAI API key**:
-   - Visit [OpenAI Platform](https://platform.openai.com/api-keys)
-   - Create a new API key
-   - Copy it to your `.env` file
+### Interactive Mode
 
-2. **Verify your MCPHub deployment**:
-   - Ensure MCPHub is running on `http://localhost:8080`
-   - Verify you have deployed MCPs (e.g., the petstore MCP from the tutorial)
-
-3. **Update MCP URLs** in the script:
-   ```python
-   mcp_urls = [
-       f"{MCPHUB_BASE_URL}/default/person-rest-oauth/mcp",
-       f"{MCPHUB_BASE_URL}/default/your-other-mcp/mcp",
-   ]
-   ```
-
-## Step 5: Run the Demo
-
-Start the interactive demo:
+Run the agent in interactive mode to ask multiple questions:
 
 ```bash
-python mcphub_langchain_demo.py
+python interactive_agent.py
 ```
 
-You should see output like:
+You'll see output like:
+
 ```
-🚀 MCPHub + LangChain Integration Demo
+📄 Loaded configuration from .env
+✅ Disabled output schema validation
+🤖 MCPHub Interactive Agent
+==================================================
+🎯 Target: http://localhost:3001/system/weather-gov-api/mcp
+1. Connecting to MCPHub and discovering tools...
+   ✅ Found 8 tools
+
+2. Initializing OpenAI LLM...
+3. Creating React agent...
+✅ Agent initialized and ready!
+
+💡 Type your request and press Enter
+   Type 'exit' or 'quit' to end
 ==================================================
 
-📡 Loading MCP servers...
-Loading: http://localhost:8080/default/person-rest-oauth/mcp
-Added tool: createPerson
-Added tool: getPersonByName
-Added tool: getAllPersons
-Added tool: getPersonById
-Added tool: updatePerson
-Added tool: deletePerson
-Successfully loaded 6 tools from http://localhost:8080/default/person-rest-oauth/mcp
+📝 Example requests:
+   - What are the current weather alerts for California?
+   - Get weather forecast for New York
+   - Search for persons named Smith
+==================================================
 
-🔧 Available Tools:
-  - createPerson: Create a new person record with OAuth 2.0 authentication
-  - getPersonByName: Retrieve a person by their name with OAuth 2.0 authentication
-  - getAllPersons: Retrieve all persons from the system with OAuth 2.0 authentication
-  - getPersonById: Retrieve a specific person by their ID with OAuth 2.0 authentication
-  - updatePerson: Update an existing person record with OAuth 2.0 authentication
-  - deletePerson: Delete a person record with OAuth 2.0 authentication
 
-🤖 Initializing AI agent...
-Agent initialized with 6 tools and system prompt
-
-✨ Ready for questions! Type 'quit' to exit.
+👤 You:
 ```
 
-## Step 6: Test AI Queries
+### Single Command Mode
 
-Try these example queries:
+Execute a single command and exit:
 
-```
-❓ Your question: Get all persons from the system
-
-❓ Your question: Create a person named Alice with email alice@example.com
-
-❓ Your question: Find a person by the name John
-
-❓ Your question: Create a person with family information including spouse and children
+```bash
+python interactive_agent.py "What are the weather alerts for Texas?"
 ```
 
-## Sample Output
+### Debug Mode
 
-When you ask "Get all persons from the system", you'll see:
+Enable detailed step-by-step output:
 
-```
-🤔 Thinking...
-
-> Entering new AgentExecutor chain...
-I need to retrieve all persons from the system. I should use the GetAllPersons tool.
-
-Action: GetAllPersons
-Action Input: {}
-Observation: {
-  "content": [
-    {
-      "type": "text", 
-      "text": "{\"persons\":[{\"name\":\"John Doe\",\"age\":30,\"email\":\"john@example.com\"},{\"name\":\"Jane Smith\",\"age\":25,\"email\":\"jane@example.com\"}]}"
-    }
-  ]
-}
-
-Final Answer: I found all persons in the system. Here are the current records:
-
-1. **John Doe**
-   - Age: 30
-   - Email: john@example.com
-
-2. **Jane Smith** 
-   - Age: 25
-   - Email: jane@example.com
-
-The system currently has 2 person records.
+```bash
+python interactive_agent.py --debug
 ```
 
-## Key Features
+Or for single command:
 
-### Smart Parameter Mapping
-The integration automatically maps LangChain's string arguments to the correct MCP tool parameters:
-
-- **JSON Input**: If the AI provides structured JSON like `{"name": "John"}`, it's used directly
-- **String Input**: If the AI provides a simple string like `"John"`, it's mapped to the first required parameter
-- **No Parameters**: If a tool has no parameters, empty arguments are used
-
-**Example:**
-```python
-# AI calls: getPersonByName("John")
-# Mapped to: {"name": "John"}
-
-# AI calls: getPersonById("123") 
-# Mapped to: {"personId": "123"}
+```bash
+python interactive_agent.py --debug "Get weather forecast for Seattle"
 ```
 
-### Closure Issue Fix
-The integration fixes Python closure issues that could cause parameter mapping to use the wrong tool schema:
+## Sample Interactions
 
-```python
-# Fixed: Variables captured by value
-def create_tool_func(mcp_tool_instance, current_tool_name, current_tool_info):
-    # Each tool gets its own correct schema
+### Example 1: Weather Alerts
+
 ```
+👤 You: What are the current weather alerts for California?
+
+🔄 Processing request: What are the current weather alerts for California?
+------------------------------------------------------------
+
+🤖 There are currently 23 active weather alerts for California. Here are some of the alerts:
+
+1. **Red Flag Warning** - Valid until Oct 19, 10:00 PM PDT
+   - Areas: Northern and Southern Salinas Valley
+
+2. **Wind Advisory** - Valid until Oct 19, 8:00 PM PDT
+   - Areas: San Francisco Bay Area
+
+3. **High Surf Advisory** - Valid until Oct 20, 3:00 AM PDT
+   - Areas: San Luis Obispo County Beaches
+
+✅ Request completed!
+```
+
+### Example 2: Person Search (if using person MCP)
+
+```
+👤 You: Create a person named Alice Johnson, age 28
+
+🔄 Processing request: Create a person named Alice Johnson, age 28
+------------------------------------------------------------
+
+🤖 I've successfully created a person record for Alice Johnson, age 28.
+
+✅ Request completed!
+```
+
+## Understanding the Code
+
+### Key Components
+
+#### 1. Environment Configuration
+The agent loads configuration from `.env` file, supporting:
+- MCP server URLs
+- Multiple authentication methods (Basic, JWT, OAuth2)
+- OpenAI API configuration
+- Debug settings
+
+#### 2. JSON-RPC Patches
+The code includes patches to handle MCPHub's JSON-RPC responses:
+- `patch_jsonrpc_validation()`: Fixes `id=null` issues
+- `patch_list_tools_result()`: Handles empty tool lists
+- `patch_output_schema_validation()`: Accepts text responses
+
+#### 3. Agent Initialization
+- Connects to MCP server once at startup
+- Discovers available tools
+- Creates a React agent with LangGraph
+
+#### 4. Request Execution
+- Supports both interactive and single-command modes
+- Configurable recursion limit
+- Optional debug mode for detailed output
+
+## Configuration Options
+
+### Debug Mode
+
+Enable detailed logging:
+
+```bash
+# In .env
+DEBUG_MCP=true
+```
+
+Or use the `--debug` flag when running.
+
+### System Message
+
+Guide the LLM's behavior:
+
+```bash
+# In .env
+SYSTEM_MESSAGE=You are a helpful assistant. Always be concise and accurate.
+```
+
+### Recursion Limit
+
+Control how many steps the agent can take:
+
+```bash
+# In .env
+RECURSION_LIMIT=50  # Default is 25
+```
+
+## Troubleshooting
+
+### "OpenAI API key not found"
+
+Make sure your `.env` file has:
+```bash
+OPENAI_API_KEY=sk-proj-your_actual_key_here
+```
+
+### "No tools available"
+
+Check:
+1. MCPHub is running at the specified URL
+2. The MCP is deployed in MCPHub
+3. Authentication credentials are correct
+
+### "Request took too many steps"
+
+The agent hit the recursion limit. Try:
+1. Increase `RECURSION_LIMIT` in `.env`
+2. Simplify your request
+3. Run with `--debug` to see what's happening
+
+### Connection Errors
+
+Verify:
+1. MCPHub URL is correct (format: `http://host:port/tenantId/mcpName/mcp`)
+2. MCPHub is accessible from your machine
+3. Authentication headers are properly configured
 
 ## Advanced Usage
 
-### Adding Multiple MCP Servers
+### Multiple MCP Servers
+
+Modify the client configuration to connect to multiple MCPs:
 
 ```python
-# Add multiple MCP servers for different functionalities
-mcp_urls = [
-    f"{MCPHUB_BASE_URL}/default/person/mcp",        # Person management
-    f"{MCPHUB_BASE_URL}/default/weather-api/mcp",   # Weather data
-    f"{MCPHUB_BASE_URL}/default/inventory/mcp",     # Inventory operations
-]
+cached_client = MultiServerMCPClient({
+    "weather_api": {
+        "transport": "streamable_http",
+        "url": "http://localhost:3001/system/weather-gov-api/mcp",
+        "headers": {"Authorization": f"Basic {basic_auth}"}
+    },
+    "person_api": {
+        "transport": "streamable_http",
+        "url": "http://localhost:3001/system/person-rest/mcp",
+        "headers": {"Authorization": f"Basic {basic_auth}"}
+    }
+})
 ```
 
-### Custom Tool Descriptions
+### Custom Models
 
-Enhance tool descriptions for better AI understanding:
+Change the OpenAI model:
 
 ```python
-# In your MCP configuration, provide detailed descriptions
-{
-  "name": "CreatePersonWithFamily",
-  "description": "Creates a new person record including their family members with detailed attributes such as names, ages, relationships, and addresses. Requires person name, age, email, and optionally spouse and children information."
-}
+llm = ChatOpenAI(model="gpt-4", temperature=0, api_key=openai_key)
 ```
 
 ### Error Handling
 
-The demo includes comprehensive error handling:
-- Network timeouts
-- MCP protocol errors
-- OpenAI API errors
-- Invalid queries
+The agent includes comprehensive error handling:
+- Network errors
+- Authentication failures
+- Tool execution errors
+- Recursion limit exceeded
 
-## Best Practices
-
-### 1. Tool Descriptions
-- Write clear, specific tool descriptions
-- Include parameter examples
-- Explain expected return values
-
-### 2. Rate Limiting
-- Be mindful of API rate limits
-- Implement retry logic for production use
-- Consider caching for frequently accessed data
-
-### 3. Security
-- Never commit API keys to version control
-- Use environment variables
-- Validate input parameters
-
-### 4. Performance
-- Load MCP servers once at startup
-- Use connection pooling for high-volume applications
-- Monitor tool execution times
-
-## Troubleshooting
-
-### Common Issues
-
-**"No tools loaded"**
-- Verify MCPHub is running
-- Check MCP server URLs
-- Ensure MCPs are deployed
-
-**"Network error"**
-- Check MCPHub connectivity
-- Verify port 8080 is accessible
-- Check firewall settings
-
-**"OpenAI API error"**
-- Verify API key is correct
-- Check API usage limits
-- Ensure sufficient credits
-
-**"Tool execution failed"**
-- Check MCP server logs
-- Verify parameter formats
-- Test tools individually in MCPHub Studio
-
-### Debug Mode
-
-Enable verbose logging:
-
-```python
-import logging
-logging.basicConfig(level=logging.DEBUG)
-```
-
-## Example Applications
-
-### HR Management System
-```python
-# Use person MCP for employee inquiries
-question = "Create a new employee record for Sarah Johnson with email sarah@company.com"
-response = integration.query(question)
-```
-
-### Family Database Management
-```python
-# Create comprehensive family records
-question = "Add a new family: John Smith, age 35, with spouse Mary Smith, age 32, and two children: Emma (8) and Alex (12)"
-response = integration.query(question)
-```
-
-### Contact Management
-```python
-# Search and retrieve person information
-question = "Find all persons named John and show me their contact details"
-response = integration.query(question)
-```
-
-The combination of MCPHub and LangChain provides a powerful foundation for building AI applications that can interact with any REST API through natural language!
+The combination of MCPHub and LangChain provides a powerful foundation for building AI applications that can interact with any API through natural language!
