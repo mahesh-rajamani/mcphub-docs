@@ -2,6 +2,11 @@
 
 MCPHub is a platform for designing, testing, deploying, and managing Model Context Protocol (MCP) servers. It transforms MCP server development from manual, fragmented processes to a unified, governed platform that dramatically reduces development time while improving quality and consistency.
 
+## What is MCP?
+
+The Model Context Protocol (MCP) is an open standard that enables AI assistants to securely connect with external data sources and tools. It provides a standardized way for AI models to interact with your systems, databases, and APIs while maintaining security and control.
+
+Learn more: [Official MCP Documentation](https://modelcontextprotocol.io/)
 
 ## When to Use MCPHub
 
@@ -50,10 +55,22 @@ MCPHub follows a modern, cloud-native architecture designed for scalability and 
 │                 │    │                  │    │                 │
 │ • Visual Design │    │ • MCP Protocol   │    │ • REST APIs     │
 │ • Testing UI    │    │ • Multi-Tenant   │    │ • gRPC Services │
-│ • AI Suggestions│    │ • Authentication │    │ • Custom Code   │
-│ • Configuration │    │ • Variable Mgmt  │    │                 │
-│ • Import Tools  │    │ • Hot Reload     │    │                 │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
+│ • AI Suggestions│    │ • Authentication │    │ • GraphQL APIs  │
+│ • Configuration │    │ • Variable Mgmt  │    │ • SOAP Services │
+│ • Import Tools  │    │ • Hot Reload     │    │ • Custom Code   │
+└─────────────────┘    └────────┬─────────┘    └─────────────────┘
+                                │
+                                │
+                       ┌────────┴─────────┐
+                       │  Configuration   │
+                       │    Storage       │
+                       │                  │
+                       │ • Memory         │
+                       │ • PostgreSQL     │
+                       │ • AWS RDS        │
+                       │ • Azure Database │
+                       │ • Cloud SQL      │
+                       └──────────────────┘
 ```
 
 ### **MCP Studio (Frontend)**
@@ -140,21 +157,12 @@ MCPHub uses a single JSON format that supports all protocols:
 }
 ```
 
-## GitHub Repository
-
-**Source Code**: [github.com/mahesh-rajamani/mcphub](https://github.com/mahesh-rajamani/mcphub)
-
-- Report issues via GitHub Issues
-- Submit feature requests via GitHub Discussions
-- Contribute via Pull Requests
-- Documentation in the `/docs` directory
-
 ## Getting Started
 
 Ready to build your first MCP? Choose your path:
 
 1. **⚡ Quick Start**: [Install with Docker](quick-install.md) and be running in 5 minutes
 2. **📚 Learn by Example**: Follow our [First MCP Tutorial](first-mcp.md)
-3. **📥 Import Existing APIs**: Start with [OpenAPI Import](../creating-mcps/import/openapi.md)
+3. **📥 Import Existing APIs**: Start with [Import Methods](../creating-mcps/import-methods.md)
 4. **🛠️ Manual Creation**: Build from scratch with comprehensive guides
 
