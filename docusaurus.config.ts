@@ -74,11 +74,6 @@ const config: Config = {
           position: 'right',
           dropdownActiveClassDisabled: true,
         },
-        {
-          href: 'https://github.com/mahesh-rajamani/mcphub',
-          label: 'GitHub',
-          position: 'right',
-        },
       ],
     },
     footer: {
@@ -90,28 +85,6 @@ const config: Config = {
             {
               label: 'Quick Start',
               to: '/docs/getting-started/quick-install',
-            },
-          ],
-        },
-        {
-          title: 'Community',
-          items: [
-            {
-              label: 'GitHub Discussions',
-              href: 'https://github.com/mahesh-rajamani/mcphub/discussions',
-            },
-            {
-              label: 'Issues',
-              href: 'https://github.com/mahesh-rajamani/mcphub/issues',
-            },
-          ],
-        },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'GitHub',
-              href: 'https://github.com/mahesh-rajamani/mcphub',
             },
           ],
         },
