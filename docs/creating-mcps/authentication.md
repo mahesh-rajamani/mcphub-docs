@@ -7,6 +7,7 @@ MCPHub supports multiple authentication methods for integrating with backend API
 | Authentication Type | Description | Use Case | Protocols |
 |-------------------|-------------|----------|-----------|
 | **None** | No authentication required | Public APIs or testing environments | All |
+| **API Key** | Simple API key authentication via header or query parameter | APIs requiring API keys in headers or query strings | REST only |
 | **Static Headers** | Fixed headers sent with every request | Fixed API keys or tokens that don't change | All |
 | **Header Forwarding** | Pass-through authentication headers from MCP clients | Authentication tokens generated outside MCPHub | All |
 | **JWT Authentication** | Acquire and manage JWT tokens automatically with refresh | Service-to-service API authentication | All |
@@ -36,6 +37,221 @@ When you select JWT Authentication, OAuth 2.0, or X.509 WS-Security, MCPHub **au
 - `clientPrivateKey` - Client private key (Certificate type, auto-encrypted)
 
 **Important**: Variable names are standardized and cannot be changed. This ensures consistency across configurations and simplifies deployment.
+
+---
+
+## API Key Authentication Configuration (REST Only)
+
+### When to Use
+- API requires simple API key authentication
+- API key is sent as an HTTP header or query parameter
+- No token refresh or complex authentication flows needed
+- Common with public APIs and third-party services
+
+### Configuration Steps
+
+1. **Go to Protocol tab** (Tab 2) with REST selected
+2. **Select Authentication Type**: Choose "API Key" from the authentication dropdown
+3. **Configure API Key settings** in the API Key Authentication Configuration card
+
+### Configuration Fields
+
+#### API Key Location
+Choose where the API key should be sent in the HTTP request:
+
+**Send as HTTP Header** (Most Common)
+- API key is sent in an HTTP request header
+- More secure as it's not visible in URLs or logs
+- Examples: `Authorization`, `X-API-Key`, `api-key`
+
+**Send as Query Parameter**
+- API key is sent as a URL query parameter
+- Visible in URLs and server logs
+- Use only when the API specifically requires it
+- Examples: `?api_key=xxx`, `?apikey=xxx`, `?key=xxx`
+
+#### Header Name / Query Parameter Name
+The name of the header or query parameter:
+
+**For headers:**
+- Common names: `Authorization`, `X-API-Key`, `api-key`, `X-Auth-Token`
+- Example: `Authorization` → `Authorization: your-api-key-value`
+
+**For query parameters:**
+- Common names: `api_key`, `apikey`, `key`, `access_token`
+- Example: `api_key` → `/api/data?api_key=your-api-key-value`
+
+#### API Key Value (Optional)
+The actual API key value or a user variable reference:
+
+**Using User Variables (Recommended)**:
+```
+{{apiKey}}
+```
+
+**Using Fixed Value** (for testing only):
+```
+sk-1234567890abcdef
+```
+
+**Note**: Leave this field empty or use a variable syntax like `{{apiKey}}` for production. The actual value should be provided via user variables.
+
+### Configuration Examples
+
+#### Example 1: Header-Based API Key
+**Configuration:**
+- **API Key Location**: Send as HTTP Header
+- **Header Name**: `X-API-Key`
+- **API Key Value**: `{{apiKey}}`
+
+**Result**: `X-API-Key: your-api-key-value`
+
+**User Variable Setup**:
+1. Go to **User Variables tab** (Tab 3)
+2. Click **"Add Variable"**
+3. Configure variable:
+   - **Name**: `apiKey`
+   - **Type**: Token
+   - **Sensitive**: Yes
+   - **Default Value**: Your actual API key
+
+#### Example 2: Query Parameter API Key
+**Configuration:**
+- **API Key Location**: Send as Query Parameter
+- **Query Parameter Name**: `api_key`
+- **API Key Value**: `{{apiKey}}`
+
+**Result**: `/api/endpoint?api_key=your-api-key-value`
+
+**User Variable Setup**: Same as Example 1
+
+#### Example 3: Authorization Header
+**Configuration:**
+- **API Key Location**: Send as HTTP Header
+- **Header Name**: `Authorization`
+- **API Key Value**: `{{apiKey}}`
+
+**Result**: `Authorization: your-api-key-value`
+
+**Note**: If your API requires a prefix like "Bearer" or "Token", include it in the API Key Value:
+```
+Bearer {{apiKey}}
+```
+
+Result: `Authorization: Bearer your-api-key-value`
+
+#### Example 4: Multiple Query Parameters
+If your API requires the API key as a query parameter along with other parameters, configure:
+- **API Key Location**: Send as Query Parameter
+- **Query Parameter Name**: `access_token`
+- **API Key Value**: `{{apiKey}}`
+
+The API key will be automatically appended to existing query parameters:
+```
+/api/users?limit=10&access_token=your-api-key-value
+```
+
+### Variable Resolution
+
+API Key authentication supports **user variable substitution** for flexible configuration:
+
+**Variable Syntax**: `{{variableName}}`
+
+**Examples**:
+- `{{apiKey}}` - Resolves to the value of the `apiKey` user variable
+- `Bearer {{apiKey}}` - Resolves to "Bearer" followed by the API key value
+- `{{environment}}-key-{{suffix}}` - Combines multiple variables
+
+Variables are resolved at runtime from:
+1. User variable default values (User Variables tab)
+2. Environment variables (production deployment)
+
+### Security Considerations
+
+**Header vs Query Parameter**:
+- **Prefer headers** for API keys when possible
+- Query parameters are visible in:
+  - Browser address bar
+  - Server logs
+  - Browser history
+  - Proxy logs
+  - Referrer headers
+
+**Protecting API Keys**:
+- Always mark API key variables as **Sensitive** (will be masked in UI)
+- Use **user variables** instead of hardcoded values
+- Store actual keys in **environment variables** for production
+- Never commit API keys to version control
+
+### OpenAPI Import
+
+When importing OpenAPI specifications, MCPHub automatically detects API key authentication:
+
+**OpenAPI Security Scheme**:
+```yaml
+securitySchemes:
+  ApiKeyAuth:
+    type: apiKey
+    in: header          # or "query"
+    name: X-API-Key
+```
+
+MCPHub will:
+1. Detect the `apiKey` security scheme
+2. Read the `in` field to determine location (header or query)
+3. Read the `name` field for the parameter/header name
+4. Create API Key authentication configuration automatically
+
+### Testing API Key Authentication
+
+1. **Configure API Key** in Protocol tab
+2. **Create user variable** in User Variables tab with your API key
+3. **Save and deploy** the MCP configuration
+4. **Use Test MCP interface** to verify:
+   - Request includes the API key header or query parameter
+   - Backend API accepts the authentication
+   - API responses are successful
+
+### Production Deployment
+
+Set API key as an environment variable:
+
+```bash
+# Export API key as environment variable
+export apiKey="sk-1234567890abcdef"
+
+# Start MCPHub
+docker run -d \
+  -e apiKey="sk-1234567890abcdef" \
+  -p 3000:3000 -p 8080:8080 \
+  mcphub/complete:latest
+```
+
+### Common API Key Patterns
+
+| API Provider | Location | Parameter/Header Name | Format |
+|--------------|----------|---------------------|---------|
+| OpenAI | Header | `Authorization` | `Bearer {{apiKey}}` |
+| Stripe | Header | `Authorization` | `Bearer {{apiKey}}` |
+| SendGrid | Header | `Authorization` | `Bearer {{apiKey}}` |
+| Mailchimp | Header | `Authorization` | `Basic apikey:{{apiKey}}` |
+| Google Maps | Query | `key` | `{{apiKey}}` |
+| OpenWeather | Query | `appid` | `{{apiKey}}` |
+| Generic REST | Header | `X-API-Key` | `{{apiKey}}` |
+
+### API Key vs Static Headers
+
+**Use API Key when**:
+- API documentation specifically mentions "API key authentication"
+- Single authentication credential needed
+- OpenAPI spec uses `type: apiKey`
+- Simple header or query parameter authentication
+
+**Use Static Headers when**:
+- Multiple custom headers needed
+- Complex authentication schemes
+- Non-standard header formats
+- Need to combine multiple authentication methods
 
 ---
 
@@ -480,11 +696,13 @@ MCPHub authentication features:
 
 ✅ **Auto-Variable Creation** - Authentication variables automatically created with standardized names
 ✅ **Multi-Protocol Support** - JWT and OAuth 2.0 work across REST, gRPC, GraphQL, and SOAP
+✅ **API Key Authentication** - Simple header or query parameter API key authentication for REST APIs
 ✅ **Automatic Token Refresh** - Tokens renewed before expiration
 ✅ **Encrypted Storage** - Secure token and credential storage
 ✅ **Header Forwarding** - Pass-through authentication from MCP clients
-✅ **Static Headers** - Simple API key authentication
+✅ **Static Headers** - Fixed headers for any authentication method
 ✅ **Quick Setup** - Pre-configured templates for popular OAuth providers
 ✅ **X.509 Support** - Certificate-based authentication for SOAP services
+✅ **OpenAPI Import** - Automatic detection and configuration from OpenAPI specs
 
 All authentication configurations use the standardized user variable system for consistent, secure credential management.
