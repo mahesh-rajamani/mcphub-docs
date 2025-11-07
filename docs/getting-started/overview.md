@@ -1,6 +1,6 @@
 # Overview
 
-MCPHub is a platform for designing, testing, deploying, and managing Model Context Protocol (MCP) servers. It transforms MCP server development from manual, fragmented processes to a unified, governed platform that dramatically reduces development time while improving quality and consistency.
+MCPHub is a **no-code platform** for creating, governing, and sharing Model Context Protocol (MCP) servers. It transforms MCP development from manual coding to visual configuration, enabling teams to centrally manage and discover MCP endpoints across the organization. Think of it as an **enterprise MCP marketplace** where teams can publish, discover, and consume AI tool integrations without writing code.
 
 ## What is MCP?
 
@@ -12,19 +12,32 @@ Learn more: [Official MCP Documentation](https://modelcontextprotocol.io/)
 
 MCPHub is ideal for:
 
-- **Enterprise Organizations** building AI applications that need to integrate with multiple backend services
-- **Development Teams** looking to standardize MCP server creation and management
-- **AI Application Developers** who need reliable, scalable tool integration
-- **Organizations** requiring governance, security, and compliance for AI tool integrations
-- **Teams** wanting to reduce development time while maintaining high quality standards
+- **Enterprise Organizations** seeking centralized governance of MCP endpoints across teams
+- **Platform Teams** building an internal MCP marketplace for organization-wide discovery and reuse
+- **Development Teams** wanting to create MCP servers without coding
+- **AI Application Developers** needing to quickly integrate multiple backend APIs as MCP tools
+- **Organizations** requiring security, compliance, and audit trails for AI tool integrations
+- **Multi-Team Environments** where MCP endpoints need to be shared and discovered across departments
 
 ## How MCPHub Helps
 
-### **Development Acceleration**
-- Reduces MCP development time through automation
-- Visual design interface reduces manual coding requirements
-- Import existing APIs (OpenAPI, gRPC, SOAP, GraphQL)
-- Real-time testing with immediate feedback
+### 🚀 **No-Code MCP Creation**
+- Visual interface eliminates manual coding - zero TypeScript/Python required
+- Import existing APIs (OpenAPI, gRPC, SOAP, GraphQL) automatically
+- Configure endpoints through forms and dropdowns
+- Deploy production-ready MCP servers in minutes, not days
+
+### 🏛️ **Centralized Governance**
+- Single platform for managing all organizational MCP endpoints
+- Role-based access control for team-specific MCP management
+- Versioning and deployment controls for change management
+- Audit trails for compliance and security
+
+### 🏪 **MCP Marketplace**
+- Teams publish MCP servers to internal marketplace
+- Cross-team discovery of available tools and integrations
+- Prevent duplicate work by reusing existing MCPs
+- Share and collaborate on MCP configurations organization-wide
 
 ### 🏢 **Enterprise-Ready**
 - **Multi-tenant architecture** with strict data isolation
