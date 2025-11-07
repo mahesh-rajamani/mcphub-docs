@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'MCPHub',
-  tagline: 'The Complete Platform for Model Context Protocol Development',
+  tagline: 'Build, Govern, and Share MCP Servers Without Code',
   favicon: 'img/favicon.png',
 
   // Set the production url of your site here
