@@ -26,6 +26,8 @@ const sidebars: SidebarsConfig = {
         },
         'creating-mcps/variables/overview',
         'creating-mcps/authentication',
+        'creating-mcps/content-type-definition',
+        'creating-mcps/mcp-resources',
       ],
     },
     {
@@ -35,6 +37,7 @@ const sidebars: SidebarsConfig = {
         'creating-mcps/settings-widget',
         'creating-mcps/export-import-config',
         'creating-mcps/deployment-management',
+        'creating-mcps/roles',
       ],
     },
     {
