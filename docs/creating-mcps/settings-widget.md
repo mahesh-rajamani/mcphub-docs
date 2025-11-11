@@ -17,12 +17,16 @@ When you first access MCPHub Studio, you'll be guided through a **Welcome Workfl
 ### Welcome Workflow Steps
 
 1. **First Launch**: When you open MCPHub Studio for the first time, the Welcome dialog automatically appears
-2. **Configure Settings**: You'll be guided to configure:
-   - Backend URL connection
-   - Tenant ID (optional, defaults to "default")
+2. **Configure Backend URL**:
+   - Enter the MCP Bridge backend URL (auto-detected by default)
+   - **Important**: Click the **Test** button to verify the connection
+   - The "Next" button is only enabled after a successful connection test
+   - You must see a "Connected" status before proceeding
+3. **Configure Tenant & AI Settings**:
+   - Tenant ID (auto-generated UUID, can be customized)
    - AI model configuration (optional, can be configured later)
-3. **Skip Option**: You can skip the AI configuration and set it up later through the Settings Widget
-4. **Complete Setup**: Once configured, the settings are saved and you can start using MCPHub Studio
+4. **Skip Option**: You can skip the AI configuration and set it up later through the Settings Widget
+5. **Complete Setup**: Once configured, the settings are saved and you can start using MCPHub Studio
 
 **After Initial Setup**: Once you've completed the Welcome Workflow, these settings can be updated anytime through the Settings Widget.
 

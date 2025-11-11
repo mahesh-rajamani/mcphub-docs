@@ -14,27 +14,37 @@ const FeatureList: FeatureItem[] = [
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Create MCP servers visually without writing code. Import from OpenAPI, gRPC, 
+        Create MCP servers visually without writing code. Import from OpenAPI, gRPC,
         or design manually with our intuitive interface.
       </>
     ),
   },
   {
-    title: 'Live Testing & AI Integration',
+    title: 'Live Testing',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Test your MCPs with real API calls and get AI-powered suggestions 
-        for improvement. Built-in integration with OpenAI and custom providers.
+        Test your MCPs with real API calls. Validate endpoints, parameters,
+        and responses in real-time with comprehensive testing tools.
       </>
     ),
   },
   {
-    title: 'Production Ready Deployment',
+    title: 'AI-Powered',
+    Svg: require('@site/static/img/undraw_docusaurus_ai.svg').default,
+    description: (
+      <>
+        Get intelligent suggestions and automated improvements.
+        Built-in integration with OpenAI and custom AI providers.
+      </>
+    ),
+  },
+  {
+    title: 'Production Ready',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Deploy to Docker, Kubernetes, or cloud platforms with one click. 
+        Deploy to Docker, Kubernetes, or cloud platforms with one click.
         Multi-tenant architecture with enterprise-grade security.
       </>
     ),
@@ -43,7 +53,7 @@ const FeatureList: FeatureItem[] = [
 
 function Feature({title, Svg, description}: FeatureItem) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx('col col--3')}>
       <div className="text--center">
         <Svg className={styles.featureSvg} role="img" />
       </div>

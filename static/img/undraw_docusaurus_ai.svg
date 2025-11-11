@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <!-- White Background -->
+  <rect width="200" height="200" fill="#ffffff"/>
+
+  <!-- Circular background -->
+  <circle cx="100" cy="100" r="80" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- Purple glow effect -->
+  <circle cx="100" cy="100" r="50" fill="#f3e8ff" opacity="0.6"/>
+
+  <!-- Sparkles/Star Icon (Lucide style) -->
+  <g transform="translate(100, 100)">
+    <!-- Large central sparkle -->
+    <path d="M 0 -28 L 2.5 -7 L 18 0 L 2.5 7 L 0 28 L -2.5 7 L -18 0 L -2.5 -7 Z" fill="#a855f7" stroke="#9333ea" stroke-width="1.5">
+      <animateTransform
+        attributeName="transform"
+        attributeType="XML"
+        type="rotate"
+        from="0"
+        to="360"
+        dur="20s"
+        repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;0.85;1" dur="2s" repeatCount="indefinite"/>
+    </path>
+
+    <!-- Small sparkle (top right) -->
+    <path d="M 26 -22 L 27 -16 L 33 -14 L 27 -12 L 26 -6 L 25 -12 L 19 -14 L 25 -16 Z" fill="#c084fc" stroke="#a855f7" stroke-width="1">
+      <animateTransform
+        attributeName="transform"
+        attributeType="XML"
+        type="scale"
+        values="1;1.4;1"
+        dur="1.8s"
+        begin="0.3s"
+        repeatCount="indefinite"/>
+    </path>
+
+    <!-- Small sparkle (bottom left) -->
+    <path d="M -26 18 L -25 24 L -19 26 L -25 28 L -26 34 L -27 28 L -33 26 L -27 24 Z" fill="#c084fc" stroke="#a855f7" stroke-width="1">
+      <animateTransform
+        attributeName="transform"
+        attributeType="XML"
+        type="scale"
+        values="1;1.4;1"
+        dur="1.8s"
+        begin="0.9s"
+        repeatCount="indefinite"/>
+    </path>
+
+    <!-- Tiny sparkle (top left) -->
+    <circle cx="-30" cy="-16" r="2.5" fill="#e9d5ff" stroke="#a855f7" stroke-width="1">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- Tiny sparkle (bottom right) -->
+    <circle cx="28" cy="20" r="2.5" fill="#e9d5ff" stroke="#a855f7" stroke-width="1">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" begin="0.75s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

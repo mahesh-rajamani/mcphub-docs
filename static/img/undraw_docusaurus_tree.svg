@@ -1,4 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
-  <rect width="200" height="200" fill="#f3f4f6"/>
-  <text x="100" y="100" text-anchor="middle" dy=".35em" font-family="Arial, sans-serif" font-size="14" fill="#6b7280">Live Testing and AI</text>
+  <!-- White Background -->
+  <rect width="200" height="200" fill="#ffffff"/>
+
+  <!-- Circular background -->
+  <circle cx="100" cy="100" r="80" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- CheckCircle Icon (Lucide style) -->
+  <g transform="translate(100, 100)">
+    <!-- Outer glow circle -->
+    <circle cx="0" cy="0" r="42" fill="#dcfce7" opacity="0.5"/>
+
+    <!-- Main circle -->
+    <circle cx="0" cy="0" r="35" fill="#bbf7d0" stroke="#10b981" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- Check mark -->
+    <path d="M -15 -2 L -7 8 L 18 -15" stroke="#10b981" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
 </svg>

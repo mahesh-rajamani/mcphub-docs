@@ -1,4 +1,46 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
-  <rect width="200" height="200" fill="#f3f4f6"/>
-  <text x="100" y="100" text-anchor="middle" dy=".35em" font-family="Arial, sans-serif" font-size="14" fill="#6b7280">Production Ready</text>
+  <!-- White Background -->
+  <rect width="200" height="200" fill="#ffffff"/>
+
+  <!-- Circular background -->
+  <circle cx="100" cy="100" r="80" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- Production Ready - Cloud with Shield -->
+  <g transform="translate(100, 100)">
+    <!-- Cloud base -->
+    <g stroke="#0ea5e9" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Cloud shape -->
+      <path d="M -25 5 Q -25 -5, -15 -10 Q -10 -15, 0 -15 Q 10 -15, 15 -10 Q 25 -5, 25 5 Q 25 15, 15 20 L -15 20 Q -25 15, -25 5 Z" fill="#e0f2fe"/>
+    </g>
+
+    <!-- Shield in center -->
+    <g stroke="#10b981" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Shield outline -->
+      <path d="M 0 -5 L -12 0 L -12 8 Q -12 15, 0 20 Q 12 15, 12 8 L 12 0 Z" fill="#dcfce7"/>
+
+      <!-- Check mark inside shield -->
+      <path d="M -5 7 L -2 10 L 6 2" stroke="#10b981" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <!-- Docker containers on sides -->
+    <!-- Left container -->
+    <g transform="translate(-20, -8)">
+      <rect x="-6" y="0" width="12" height="10" rx="1.5" fill="#bae6fd" stroke="#0ea5e9" stroke-width="1.5"/>
+      <line x1="-4" y1="3" x2="4" y2="3" stroke="#0ea5e9" stroke-width="1"/>
+      <line x1="-4" y1="6" x2="4" y2="6" stroke="#0ea5e9" stroke-width="1"/>
+    </g>
+
+    <!-- Right container -->
+    <g transform="translate(20, -8)">
+      <rect x="-6" y="0" width="12" height="10" rx="1.5" fill="#bae6fd" stroke="#0ea5e9" stroke-width="1.5"/>
+      <line x1="-4" y1="3" x2="4" y2="3" stroke="#0ea5e9" stroke-width="1"/>
+      <line x1="-4" y1="6" x2="4" y2="6" stroke="#0ea5e9" stroke-width="1"/>
+    </g>
+
+    <!-- Pulse animation on shield -->
+    <circle cx="0" cy="7" r="15" fill="none" stroke="#10b981" stroke-width="1.5" opacity="0">
+      <animate attributeName="r" values="12;20;12" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
 </svg>

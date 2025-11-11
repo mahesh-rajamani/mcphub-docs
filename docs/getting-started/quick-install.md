@@ -36,6 +36,16 @@ curl -H "Authorization: Basic YWRtaW46YWRtaW4xMjM=" http://localhost:3000/admin/
 
 One-click deployment to Render.com's free tier with auto-generated credentials. Note: Uses in-memory storage.
 
+### Finding Your Deployed MCPHub URL
+
+After deployment completes:
+
+1. Go to your [Render Dashboard](https://dashboard.render.com/)
+2. Click on your deployed service (named `mcphub-all`)
+3. Click on **"Events"** in the left sidebar
+4. Look for deployment events that show your service URL
+5. Your MCPHub URL will be in the format: `https://your-service-name.onrender.com`
+
 For complete deployment instructions, see: [MCPHub Render Deployment Guide](https://github.com/mahesh-rajamani/mcphub-render)
 
 ## Verification

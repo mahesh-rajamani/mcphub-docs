@@ -11,7 +11,14 @@ Create your first Model Context Protocol server using MCPHub. This guide imports
 
 1. **Open your web browser**
 2. **Navigate to**: `http://localhost:3000`
-3. **Verify**: You see the MCPHub Studio homepage with available MCPs
+3. **First Time Setup**: If this is your first time accessing MCPHub Studio, you'll see a Welcome dialog that guides you through initial configuration:
+   - Backend URL (auto-detected and preloaded) - test the connection by clicking the **Test** button
+   - Set up tenant ID (auto-generated UUID)
+   - Configure AI model settings (optional)
+
+   > **See**: [Initial Configuration: Welcome Workflow](../creating-mcps/settings-widget.md#initial-configuration-welcome-workflow) for detailed setup instructions.
+
+4. **Verify**: After setup, you'll see the MCPHub Studio homepage with available MCPs
 
 ## Step 2: Import National Weather Service OpenAPI Specification
 
