@@ -67,11 +67,12 @@ For production environments, deploy MCPHub using separate containers for each co
    - Each instance serves MCP endpoints and API requests
    - **mcphub-studio** typically runs as a single instance (admin UI, not part of hot path)
 
-3. **Database Storage**: Configure all backend services to use a shared PostgreSQL database instead of in-memory storage
+3. **Database Storage and Encryption**: Configure all backend services to use a shared PostgreSQL database instead of in-memory storage
    - Better data persistence and reliability
    - Enables horizontal scaling
    - Supports backup and recovery
    - All mcphub-server instances share the same database for configuration consistency
+   - See [Storage and Encryption](../advanced/storage-encryption.md) for details on database configuration and encryption options
 
 4. **API Gateway**: Use an API gateway (Kong, NGINX, AWS API Gateway, etc.) to:
    - Authenticate and authorize access to MCP endpoints
