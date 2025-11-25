@@ -1,10 +1,10 @@
 # Quick Install
 
-Get MCPHub running in under 5 minutes with Docker or deploy to the cloud.
+Get MCPHub running in under 5 minutes with Docker.
 
 The quick install uses a combined image (`mcphub-all`) that bundles all MCPHub microservices (MCP Studio, MCP Bridge, and Python Engine) into a single container for easy testing and evaluation. This image uses in-memory storage for configuration persistence, making it ideal for development and testing but not recommended for production use.
 
-## Option 1: Docker Installation
+## Docker Installation
 
 Single container deployment with all components and built-in nginx:
 
@@ -31,22 +31,6 @@ curl -H "Authorization: Basic YWRtaW46YWRtaW4xMjM=" http://localhost:3000/admin/
 ```
 
 > **Note**: The complete image includes nginx that handles routing to all internal services (MCP Bridge API on port 8080 and Python Engine on port 8082). You only need to expose port 3000.
-
-## Option 2: Deploy to Render.com
-
-One-click deployment to Render.com's free tier with auto-generated credentials. Note: Uses in-memory storage.
-
-### Finding Your Deployed MCPHub URL
-
-After deployment completes:
-
-1. Go to your [Render Dashboard](https://dashboard.render.com/)
-2. Click on your deployed service (named `mcphub-all`)
-3. Click on **"Events"** in the left sidebar
-4. Look for deployment events that show your service URL
-5. Your MCPHub URL will be in the format: `https://your-service-name.onrender.com`
-
-For complete deployment instructions, see: [MCPHub Render Deployment Guide](https://github.com/mahesh-rajamani/mcphub-render)
 
 ## Verification
 

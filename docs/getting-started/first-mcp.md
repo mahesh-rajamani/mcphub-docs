@@ -12,7 +12,7 @@ Create your first Model Context Protocol server using MCPHub. This guide imports
 1. **Open your web browser**
 2. **Navigate to**: `http://localhost:3000`
 3. **First Time Setup**: If this is your first time accessing MCPHub Studio, you'll see a Welcome dialog that guides you through initial configuration:
-   - Backend URL (auto-detected and preloaded) - test the connection by clicking the **Test** button
+   - Backend URL: Should be auto-detected and preloaded. In case of "mcphub-all" image deployed locally in Docker, the backend URL needs to be `http://localhost:3000`. Test the connection by clicking the **Test** button
    - Set up tenant ID (auto-generated UUID)
    - Configure AI model settings (optional)
 
@@ -39,76 +39,9 @@ We'll import the National Weather Service API using the import wizard:
 9. **Click** **"Preview"** to preview the endpoints
 10. **Review** the imported endpoints (weather alerts, forecasts, observations, etc.)
 11. **Click** **"Import"** to complete the import
+12. **Click** **"Save Configuration"** to save your MCP configuration
 
-## Step 3: Review Imported Configuration
-
-After clicking "Import", you'll see the MCP configuration form pre-filled:
-
-### Tab 1: Basic Info
-Review the automatically filled fields:
-- **MCP Name**: `weather-gov-api` (auto-generated from API)
-- **Description**: `weather.gov API` (from OpenAPI spec)
-- **Version**: Auto-extracted from the specification
-
-> **Note**: You can change the MCP name and description if needed to better suit your use case.
-
-### Tab 2: Protocol
-1. **Click** the **"Protocol"** tab
-2. **Verify** the base URL: `https://api.weather.gov`
-3. **Set** the authentication type to **"None"** (this is a public API with no authentication required)
-
-## Step 5: Explore Imported Endpoints
-
-1. **Click** the **"Endpoints"** tab (Tab 5)
-2. **Review** the imported weather endpoints:
-   - **Alerts**: Get weather alerts, active alerts, filtered by area
-   - **Forecasts**: Grid-based forecasts, zone forecasts, point metadata
-   - **Observations**: Latest observations from weather stations
-   - **Aviation**: Aviation weather products and forecasts
-3. **Click** on an endpoint like **"alerts_query"** to examine it
-4. **Notice** the following details:
-   - **Method**: `GET`
-   - **Path**: `/alerts`
-   - **Description**: Returns weather alerts
-   - **Parameters**: Query parameters for filtering (status, region, area, etc.)
-
-## Step 6: Explore Imported Schema Definitions and AI Assist
-
-Schema definitions are the message formats used as API request and response bodies.
-
-1. **Click** the **"Schema Definitions"** tab (Tab 4)
-2. **Review** the imported schema definitions from the Weather API
-3. **Click** on a simple schema like **"GeocodeData"** to examine it
-4. **Notice** the schema structure:
-   - Field names and types
-   - Descriptions for each field
-   - Required vs optional fields
-
-### Using AI Assist for Schema Descriptions
-
-MCPHub includes an AI-powered feature to improve schema field descriptions for better tool calling performance:
-
-1. **Look** for the **✨✨ (double sparkle)** icon next to schema field descriptions
-2. **Click** the **✨✨** button to generate improved descriptions
-3. **Review** the AI-generated suggestions
-4. **Apply** the suggestions that improve clarity and context
-
-**Benefits**:
-- Better understanding of data structures for AI models
-- Improved field descriptions help with accurate data extraction
-- Consistent documentation across all schema fields
-
-## Step 7: Create Your MCP Configuration
-
-After enhancing descriptions and reviewing the imported configuration, you need to save it as an MCP:
-
-1. **Review** your configuration one final time
-2. **Click** the **"Create MCP"** button (usually at the bottom right of the form)
-3. **Wait** for the success confirmation
-4. **Note**: You should see a message like "MCP 'swagger-petstore' created successfully"
-5. **Verify**: You're now redirected to the MCP list where you can see your new configuration
-
-## Step 8: Deploy Your MCP
+## Step 3: Deploy Your MCP
 
 Now that your MCP configuration is created, you need to deploy it to the MCP Bridge:
 
@@ -117,7 +50,7 @@ Now that your MCP configuration is created, you need to deploy it to the MCP Bri
 3. **In the deployment dialog**, **click** **"Deploy"**
 4. **Wait** for deployment confirmation (green checkmark or success message)
 
-## Step 9: Test Your Deployed MCP with Claude Desktop
+## Step 4: Test Your Deployed MCP with Claude Desktop
 
 Now let's test the deployed weather API configuration with Claude Desktop:
 
@@ -177,20 +110,3 @@ Now let's test the deployed weather API configuration with Claude Desktop:
    - "Are there any weather alerts in Texas?"
 2. **Observe** Claude using the weather MCP tools to retrieve real-time data
 3. **Verify** the MCP integration is working correctly
-
-## Step 10: Next Steps - Improve Tool Descriptions
-
-Improve the tool descriptions for better AI performance:
-
-1. **Return** to the **"Endpoints"** tab (Tab 5)
-2. **Click** on an endpoint like **"alerts_query"**
-3. **Edit** the **Description** field to be more specific:
-   ```
-   Retrieves current weather alerts for specified regions, including severity level, urgency status, affected geographic areas, and alert types. Essential for monitoring active weather warnings, watches, and advisories across the United States.
-   ```
-4. **Edit** parameter descriptions for better clarity
-5. **Click** **"Save Configuration"** to save changes
-
-You can repeat this process for other endpoints to enhance their descriptions and improve AI tool selection accuracy.
-
-
