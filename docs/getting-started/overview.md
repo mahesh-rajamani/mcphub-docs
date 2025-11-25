@@ -8,55 +8,6 @@ The Model Context Protocol (MCP) is an open standard that enables AI assistants 
 
 Learn more: [Official MCP Documentation](https://modelcontextprotocol.io/)
 
-## When to Use MCPHub
-
-MCPHub is ideal for:
-
-- **Enterprise Organizations** seeking centralized governance of MCP endpoints across teams
-- **Platform Teams** building an internal MCP marketplace for organization-wide discovery and reuse
-- **Development Teams** wanting to create MCP servers without coding
-- **AI Application Developers** needing to quickly integrate multiple backend APIs as MCP tools
-- **Organizations** requiring security, compliance, and audit trails for AI tool integrations
-- **Multi-Team Environments** where MCP endpoints need to be shared and discovered across departments
-
-## How MCPHub Helps
-
-### 🚀 **No-Code MCP Creation**
-- Visual interface eliminates manual coding - zero TypeScript/Python required
-- Import existing APIs (OpenAPI, gRPC, SOAP, GraphQL) automatically
-- Configure endpoints through forms and dropdowns
-- Deploy production-ready MCP servers in minutes, not days
-
-### 🏛️ **Centralized Governance**
-- Single platform for managing all organizational MCP endpoints
-- Role-based access control for team-specific MCP management
-- Versioning and deployment controls for change management
-- Audit trails for compliance and security
-
-### 🏪 **MCP Marketplace**
-- Teams publish MCP servers to internal marketplace
-- Cross-team discovery of available tools and integrations
-- Prevent duplicate work by reusing existing MCPs
-- Share and collaborate on MCP configurations organization-wide
-
-### 🏢 **Enterprise-Ready**
-- **Multi-tenant architecture** with strict data isolation
-- **Production-grade security** with authentication and encryption
-- **Scalable deployment** with Docker and Kubernetes support
-- **Comprehensive audit logging** and monitoring
-
-### 🤖 **AI-Powered Quality**
-- **AI suggestions** for tool descriptions and improvements
-- **Multi-model testing** with OpenAI, Anthropic, and Groq
-- **Fine-tuning dataset generation** for model optimization
-- **Intelligent validation** and error detection
-
-### 🔧 **Operational Excellence**
-- **Semantic versioning** with version management
-- **Multi-tenant deployment** with tenant isolation
-- **Configuration validation** and error checking
-- **Deployment package generation** for multiple environments
-
 ## Architecture
 
 MCPHub follows a modern, cloud-native architecture designed for scalability and reliability:
@@ -105,70 +56,43 @@ Java 21 + Quarkus 3.6.4 + Maven
 - **Protocol Adapters**: REST, gRPC, SOAP, GraphQL support
 - **Security Layer**: Encryption, authentication, audit logging
 
-## Top 10 Features
+## How MCPHub Helps
 
-- **Visual MCP Designer** - No-code interface with drag-and-drop functionality
-- **Multi-Protocol Import** - Import OpenAPI, gRPC, SOAP, and GraphQL specifications
-- **Universal Schema Format** - Single JSON format for all protocols and deployment targets
-- **Real-time Testing Framework** - Test MCPs with live API calls and AI model integration
-- **AI-Powered Improvements** - Intelligent suggestions for tool descriptions and optimizations
-- **Multi-Tenant Architecture** - Host multiple MCPs with complete tenant isolation
-- **Variable Substitution System** - Dynamic configuration with `{{variableName}}` syntax
-- **Production Deployment** - Docker containers, Kubernetes manifests, and CI/CD integration
-- **Enterprise Security** - Authentication, authorization, encryption, and audit logging
-- **Configuration Management** - Versioning, duplication, import/export, and deployment packages
+### 🚀 **No-Code MCP Creation**
+- Visual interface eliminates manual coding - zero TypeScript/Python required
+- Import existing APIs (OpenAPI, gRPC, SOAP, GraphQL) automatically
+- Configure endpoints through forms and dropdowns
+- Deploy production-ready MCP servers in minutes, not days
 
-## Universal Schema Format
+### 🏛️ **Centralized Governance**
+- Single platform for managing all organizational MCP endpoints
+- Role-based access control for team-specific MCP management
+- Versioning and deployment controls for change management
+- Audit trails for compliance and security
 
-MCPHub uses a single JSON format that supports all protocols:
+### 🏪 **MCP Marketplace**
+- Teams publish MCP servers to internal marketplace
+- Cross-team discovery of available tools and integrations
+- Prevent duplicate work by reusing existing MCPs
+- Share and collaborate on MCP configurations organization-wide
 
-```json
-{
-  "mcpName": "crypto-price-mcp",
-  "description": "Cryptocurrency price information APIs",
-  "tenantId": "system",
-  "userVariables": [
-    {
-      "name": "apiKey",
-      "description": "API key for authentication",
-      "type": "token",
-      "required": true,
-      "sensitive": true
-    }
-  ],
-  "baseConfigs": {
-    "rest": {
-      "baseUrl": "https://api.{{environment}}.example.com",
-      "serviceName": "Crypto API",
-      "auth": {
-        "type": "jwt",
-        "jwtConfig": {
-          "tokenEndpoint": "https://auth.example.com/token",
-          "loginMethod": "client_credentials"
-        }
-      }
-    }
-  },
-  "endpoints": [
-    {
-      "name": "getCurrentPrice",
-      "apiType": "rest",
-      "method": "GET",
-      "path": "/api/v3/ticker/price",
-      "description": "Get current cryptocurrency price",
-      "enabled": true,
-      "queryParameters": [
-        {
-          "name": "symbol",
-          "description": "Trading pair symbol (e.g., BTCUSDT)",
-          "type": "string",
-          "required": true
-        }
-      ]
-    }
-  ]
-}
-```
+### 🏢 **Enterprise-Ready**
+- **Multi-tenant architecture** with strict data isolation
+- **Production-grade security** with authentication and encryption
+- **Scalable deployment** with Docker and Kubernetes support
+- **Comprehensive audit logging** and monitoring
+
+### 🤖 **AI-Powered Quality**
+- **AI suggestions** for tool descriptions and improvements
+- **Multi-model testing** with OpenAI, Anthropic, and Groq
+- **Fine-tuning dataset generation** for model optimization
+- **Intelligent validation** and error detection
+
+### 🔧 **Operational Excellence**
+- **Semantic versioning** with version management
+- **Multi-tenant deployment** with tenant isolation
+- **Configuration validation** and error checking
+- **Deployment package generation** for multiple environments
 
 ## Getting Started
 
